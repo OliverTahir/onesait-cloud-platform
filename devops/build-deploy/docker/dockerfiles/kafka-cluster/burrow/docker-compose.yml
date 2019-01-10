@@ -1,0 +1,12 @@
+version: "2"
+services:
+  burrow:
+    image: onesaitplatform/burrow:latest
+    build: .
+    volumes:
+      - ${PWD}/docker-config:/etc/burrow/
+      - ${PWD}/tmp:/var/tmp/burrow
+    ports:
+      - 18400:18400
+    restart: on-failure
+    network_mode: host

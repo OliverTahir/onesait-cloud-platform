@@ -1,0 +1,6 @@
+spring: ## General Config  
+   datasource: ## JPA Config
+      url: jdbc:mysql://${CONFIGDBHOST}:${CONFIGDBPORT}/onesaitplatform_config?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&autoReconnect=true
+## LOGGING CONF
+logging:
+   path: /var/log/platform-logs 

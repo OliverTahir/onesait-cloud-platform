@@ -1,0 +1,60 @@
+onesaitplatform:
+   dashboardengine:
+      url: https://${SERVER_NAME}/controlpanel/dashboards/view/
+   notebook:
+      url: https://${SERVER_NAME}/controlpanel/notebooks/app/
+   database.mongodb:
+      servers: ${REALTIMEDBSERVERS}
+      quasar.connector.http.endpoint: http://${QUASARHOST}:${QUASARPORT}/query/fs/
+      authenticationDatabase: ${REALTIMEDBAUTHDB}      
+      useAuth: ${REALTIMEDBUSEAUTH}
+      username: ${REALTIMEDBUSER}
+      password: ${REALTIMEDBPASS}      
+      writeConcern: ${REALTIMEDBWRITECONCERN}      
+   database.elasticsearch:
+      sql.connector.http.endpoint: http://${ELASTICDBHOST}:${ELASTICDBPORT}
+      url: ${ELASTICDBHOST}
+      port: 9300
+   urls:
+    iotbroker: https://${SERVER_NAME}           
+   flowengine.services:
+    request.timeout.ms: 5000
+    baseurl: http://flowengineservice:20100/flowengine/admin   
+    proxyurl: https://${SERVER_NAME}/nodered/    
+   webproject:
+      rootfolder.path: /usr/local/webprojects/
+      baseurl: https://${SERVER_NAME}/web/
+   iotbroker.plugable:
+     gateway:
+      kafka:
+        enable: ${KAFKAENABLED}
+        host: ${KAFKAHOST}
+        port: ${KAFKAPORT}  
+        user: admin
+        password: admin-secret 
+        partitions: 10
+        replication: 1
+   analytics.notebook:
+      zeppelinHostname: zeppelin
+   analytics.dataflow:
+      streamsetsHostname: streamsets
+   router.alternativeURL: http://routerservice:20000/router/router/           
+   kafka.burrow.monitoring:
+      host.url : http://kafkamonitoringservice:18400
+      
+spring:
+   datasource:  
+      url: jdbc:mysql://${CONFIGDBHOST}:${CONFIGDBPORT}/onesaitplatform_config?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&autoReconnect=true
+   boot.admin: #Spring Boot Admin Config    
+      url: http://monitoringuiservice:18100/monitoring    
+      client.service-url: http://controlpanelservice:${server.port}${server.contextPath}/ 
+   data.mongodb:
+      host: ${REALTIMEDBSERVERS}
+   elasticsearch.jest:
+      uris: http://${ELASTICDBHOST}:${ELASTICDBPORT}
+quartz:
+    datasource:
+      url: jdbc:mysql://${SCHEDULERDBHOST}:${SCHEDULERDBPORT}/onesaitplatform_scheduler?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&autoReconnect=true
+## LOGGING CONF
+logging:
+   path: /var/log/platform-logs

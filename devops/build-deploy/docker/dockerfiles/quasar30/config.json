@@ -1,0 +1,19 @@
+{
+  "server": {
+    "port": 10800
+  },
+  "metastore": {
+    "database": {
+      "h2": {
+        "location": "./quasar-metastore.db"
+      }
+    }
+  },
+  "mountings": {
+    "/": {
+      "mongodb": {
+        "connectionUri": "mongodb://${AUTHPARAMS}${REALTIMEDB}:${REALTIMEDBPORT}/${AUTHDB}?sockettimeoutms=${TIMEOUTMS}"
+      }
+    }
+  }
+}

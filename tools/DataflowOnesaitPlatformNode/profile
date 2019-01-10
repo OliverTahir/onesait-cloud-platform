@@ -1,0 +1,12 @@
+export CHARSET=UTF-8
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export PAGER=less
+export PS1='\h:\w\$ '
+export SDC_JAVA_OPTS="-Xmx1024m  -Xms1024m -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=2005,suspend=n -server ${SDC_JAVA_OPTS}"
+umask 022
+
+for script in /etc/profile.d/*.sh ; do
+        if [ -r $script ] ; then
+                . $script
+        fi
+done

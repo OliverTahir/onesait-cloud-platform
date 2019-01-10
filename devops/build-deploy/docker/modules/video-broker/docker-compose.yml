@@ -1,0 +1,12 @@
+version: "2.1"
+services:         
+  videobrokerservice:
+    image: ${REPOSITORY}onesaitplatform/controlpanel:${MODULE_TAG}
+    container_name: videobrokerservice    
+    external_links:
+     - configdb
+    networks:
+      - data_datanetwork
+networks:
+  data_datanetwork:
+    external: true

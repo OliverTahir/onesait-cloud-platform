@@ -1,0 +1,77 @@
+version: '2'
+services:
+  oauthservice:
+    scale: 1
+    start_on_create: false
+  streamsets:
+    scale: 1
+    start_on_create: false
+  schedulerdb:
+    scale: 1
+    start_on_create: false
+  configinit:
+    scale: 1
+    start_on_create: false
+  apimanagerservice:
+    scale: 1
+    start_on_create: false
+  digitaltwinbrokerservice:
+    scale: 1
+    start_on_create: false
+  cacheservice:
+    scale: 1
+    start_on_create: false
+  flowengineservice:
+    scale: 1
+    start_on_create: false
+  controlpanelservice:
+    scale: 1
+    start_on_create: false
+  elasticdb:
+    scale: 1
+    start_on_create: false
+  zookeeper:
+    scale: 1
+    start_on_create: false
+  clm:
+    scale: 1
+    start_on_create: false
+  devicesimulator:
+    scale: 1
+    start_on_create: false
+  zeppelin:
+    scale: 1
+    start_on_create: false
+  configdb:
+    scale: 1
+    start_on_create: false
+  rtdbmaintainerservice:
+    scale: 1
+    start_on_create: false
+  iotbrokerservice:
+    scale: 1
+    start_on_create: false
+  govconsole:
+    scale: 1
+    start_on_create: false
+  loadbalancerservice:
+    scale: 1
+    start_on_create: false
+  quasar:
+    scale: 1
+    start_on_create: false
+  kafka:
+    scale: 1
+    start_on_create: false
+  monitoringuiservice:
+    scale: 1
+    start_on_create: false
+  dashboardengineservice:
+    scale: 1
+    start_on_create: false
+  routerservice:
+    scale: 1
+    start_on_create: false
+  realtimedb:
+    scale: 1
+    start_on_create: false

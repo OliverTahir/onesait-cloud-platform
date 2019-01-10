@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Template
+objects:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: hazelcast
+  spec:
+    replicas: 3
+    selector: 
+      name: hazelcast
+    template:
+      metadata:
+        labels:
+          name: hazelcast
+      spec:
+        containers:
+          - name: hazelcast
+            image: hazelcast/hazelcast-openshift  
+            ports:
+              - containerPort: 5701
+                protocol: TCP
+            env:
+              - name: HAZELCAST_KUBERNETES_SERVICE_DNS
+                value: hazelcast-service.datahistorianop.svc
+
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: hazelcast-service
+  spec:
+    type: ClusterIP
+    clusterIP: None
+    ports:
+      - port: 5701
+        protocol: TCP
+    selector:
+      name: hazelcast

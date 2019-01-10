@@ -1,0 +1,59 @@
+[zookeeper]
+servers=[ "localhost:2181" ]
+timeout=6
+root-path="/burrow"
+
+[storage.mystorage]
+class-name="inmemory"
+intervals=10  # number of offset intervals stored in memory and returned by REST API
+expire-group=604800  # 7 days by default if no offset has been commited
+workers=20
+min-distance=1
+group-whitelist=".*"
+
+[cluster.local]
+class-name="kafka"
+servers=[ "localhost:9092" ]
+topic-refresh=60
+offset-refresh=60
+
+#[cluster.local_hour]
+#class-name="kafka"
+#servers=[ "localhost:9092" ]
+#topic-refresh=60
+#offset-refresh=3600
+
+[consumer.local]
+class-name="kafka"
+cluster="local"
+servers=[ "localhost:9092" ]
+group-blacklist="^(console-consumer-|python-kafka-consumer-|_confluent).*$"
+group-whitelist=""
+
+[consumer.local_zk]
+class-name="kafka_zk"
+cluster="local"
+servers=[ "localhost:2181" ]
+zookeeper-path="/local"
+zookeeper-timeout=30
+group-blacklist="^(console-consumer-|python-kafka-consumer-).*$"
+group-whitelist=""
+
+[httpserver.default]
+address=":18400"
+
+
+#[notifier.onesait_platform]
+#class-name="http"
+#url-open="http://localhost:5050/rtvachetDomain/notif_kafka/"
+#url-close="http://localhost:5050/rtvachetDomain/notif_kafka_end/"
+#interval=60
+#timeout=5
+#keepalive=30
+#extras={ api_key="REDACTED", app="burrow", tier="OnesaitPlatform", fabric="mydc" }
+#template-open="/etc/burrow/default-http-post.tmpl"
+#template-close="/etc/burrow/default-http-delete.tmpl"
+#method-open="POST"
+#method-close="DELETE"
+#send-close=true
+#threshold=1

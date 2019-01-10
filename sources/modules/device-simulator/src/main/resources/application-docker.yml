@@ -1,0 +1,25 @@
+onesaitplatform:
+   database.mongodb:
+      servers: ${REALTIMEDBSERVERS}
+      authenticationDatabase: ${REALTIMEDBAUTHDB}      
+      useAuth: ${REALTIMEDBUSEAUTH}
+      username: ${REALTIMEDBUSER}
+      password: ${REALTIMEDBPASS}   
+      writeConcern: ${REALTIMEDBWRITECONCERN}         
+   iotbroker:
+      server: http://iotbrokerservice:19000/iotbroker                  
+   router.alternativeURL: http://routerservice:20000/router/router/
+spring:
+   datasource:  
+      url: jdbc:mysql://${CONFIGDBHOST}:${CONFIGDBPORT}/onesaitplatform_config?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&autoReconnect=true
+   boot.admin: #Spring Boot Admin Config    
+      url: http://monitoringuiservice:18100/monitoring
+      client.service-url: http://devicesimulator:${server.port}${server.contextPath}/      
+quartz:
+    datasource:
+      url: jdbc:mysql://${SCHEDULERDBHOST}:${SCHEDULERDBPORT}/onesaitplatform_scheduler?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&autoReconnect=true
+
+              
+## LOGGING CONF
+logging:
+   path: /var/log/platform-logs 

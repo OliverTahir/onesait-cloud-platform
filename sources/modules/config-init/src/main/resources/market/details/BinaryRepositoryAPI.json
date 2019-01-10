@@ -1,0 +1,8 @@
+{
+	"title":"Java Example for Binary Repository Basic Operations",
+	"technologies":"Java,JAR",
+	"description":"A Java example illustrating how to perform CRUD operations with binary files",
+	"detailedDescription":"In this example, a file is inserted, then retrieved, then updated, and finally deleted.",
+	"installation":"Download the .jar file. You can use it by executing \"java -jar binary-repository-rest.jar\"",
+	"functionality":"RESTFul CRUD Operations"
+}

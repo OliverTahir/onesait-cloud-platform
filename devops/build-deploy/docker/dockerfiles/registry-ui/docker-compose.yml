@@ -1,0 +1,43 @@
+version: '3'
+services:
+  proxy:
+    image: nginx:latest
+    container_name: proxy
+    ports:
+      - "80:80"
+      - "443:443"      
+    volumes:  
+      - ${DATADISK}${NGINX_VOLUME}/nginx.conf:/etc/nginx/nginx.conf:rw 
+      - ${DATADISK}${CERTS_VOLUME}/domain.cer:/etc/nginx/ssl/domain.cer:ro
+      - ${DATADISK}${CERTS_VOLUME}/domain.key:/etc/nginx/ssl/domain.key:ro
+    restart: on-failure   
+    links:
+      - opregistry 
+      - opregistryui      
+  opregistry:
+    image: registry:2
+    container_name: opregistry
+    ports:
+      - "5000:5000"
+    environment:
+#      - REGISTRY_AUTH="htpasswd"
+#      - REGISTRY_AUTH_HTPASSWD_REALM="Registry Realm"
+#      - REGISTRY_AUTH_HTPASSWD_PATH="/auth/.htpasswd"  
+      - REGISTRY_STORAGE_DELETE_ENABLED="true"
+      - REGISTRY_HTTP_ADDR="0.0.0.0:443"
+      - REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.cer
+      - REGISTRY_HTTP_TLS_KEY=/certs/domain.key
+    volumes:
+      - ${DATADISK}${IMAGES_VOLUME}:/var/lib/registry
+      - ${DATADISK}${HTPASSWD_VOLUME}:/auth
+      - ${DATADISK}${CERTS_VOLUME}:/certs
+    restart: always 
+  opregistryui:
+    image: konradkleine/docker-registry-frontend:v2
+    container_name: opregistryui
+    environment:
+      - ENV_DOCKER_REGISTRY_HOST=registry.onesaitplatform.com
+      - ENV_DOCKER_REGISTRY_PORT=443
+      - ENV_DOCKER_REGISTRY_USE_SSL=1
+      - ENV_MODE_BROWSE_ONLY=false
+

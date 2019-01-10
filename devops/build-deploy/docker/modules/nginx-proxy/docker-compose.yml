@@ -1,0 +1,16 @@
+version: "2.1"
+
+services:
+  proxy:
+    image: nginx:latest
+    container_name: proxy
+    networks:
+      - data_datanetwork    
+    ports:
+      - "80:80"    
+    volumes:  
+      - ${NGINX_VOLUME}:/etc/nginx/nginx.conf:rw     
+    restart: on-failure
+networks:
+  data_datanetwork:
+    external: true

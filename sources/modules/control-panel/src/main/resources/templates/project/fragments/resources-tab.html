@@ -1,0 +1,58 @@
+<div class="col-md-12 col-xs-12">	
+	<div th:if="!${#lists.isEmpty(projectObj.projectResourceAccesses)}" class="form-group">
+		<div id="resource-access-list" class="margin-bottom-20">
+			<table id="resource-access-list" class="table" data-loaded="false">
+			
+				<thead>
+					<tr class="cabecera-tabla" role="row" >
+						<th class="titulo-columnas" th:text="#{project.resource.type}">Type</th>
+						<th class="titulo-columnas text-center" th:text="#{project.resource.identification}">Identification</th>
+						<th class="titulo-columnas text-center" th:text="#{project.resource.accesstype}">Access Type</th>
+						<th th:if="${projectObj.app == null}" class="titulo-columnas text-center" th:text="#{project.resource.users}">Users</th>
+						<th th:if="${projectObj.app != null}" class="titulo-columnas text-center" th:text="#{project.resource.roles}">Roles</th>
+						<th class="titulo-columnas text-center" th:text="#{gen.options}">Options</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="access : ${projectObj.projectResourceAccesses}" class="ldap-authorization-model">
+						<td class="text-left">
+							<i th:if="${access.resource.class.simpleName == 'Ontology'}" class="fa flaticon-network font-hg font-blue-hoki tooltips" data-container="body" data-placement="right" th:title="${access.resource.class.simpleName}" th:data-original-title="${access.resource.class.simpleName}"></i>
+							<i th:if="${access.resource.class.simpleName == 'Api'}" class="fa flaticon-multimedia font-hg font-blue-hoki tooltips" data-container="body" data-placement="right" th:title="${access.resource.class.simpleName}" th:data-original-title="${access.resource.class.simpleName}"></i>
+							<i th:if="${access.resource.class.simpleName == 'DigitalTwinDevice'}" class="fa flaticon-medical font-hg font-blue-hoki tooltips" data-container="body" data-placement="right" th:title="${access.resource.class.simpleName}" th:data-original-title="${access.resource.class.simpleName}"></i>
+							<i th:if="${access.resource.class.simpleName == 'ClientPlatform'}" class="fa flaticon-truck font-hg font-blue-hoki tooltips" data-container="body" data-placement="right" th:title="${access.resource.class.simpleName}" th:data-original-title="${access.resource.class.simpleName}"></i>
+							<i th:if="${access.resource.class.simpleName == 'Notebook'}" class="fa flaticon-interface-5 font-hg font-blue-hoki tooltips" data-container="body" data-placement="right" th:title="${access.resource.class.simpleName}" th:data-original-title="${access.resource.class.simpleName}"></i>
+							<i th:if="${access.resource.class.simpleName == 'FlowDomain'}" class="fa flaticon-analytics font-hg font-blue-hoki tooltips" data-container="body" data-placement="right" th:title="${access.resource.class.simpleName}" th:data-original-title="${access.resource.class.simpleName}"></i>
+							<i th:if="${access.resource.class.simpleName == 'Gadget'}" class="fa flaticon-app font-hg font-blue-hoki tooltips" data-container="body" data-placement="right" th:title="${access.resource.class.simpleName}" th:data-original-title="${access.resource.class.simpleName}"></i>
+							<i th:if="${access.resource.class.simpleName == 'Dashboard'}" class="fa flaticon-graph font-hg font-blue-hoki tooltips" data-container="body" data-placement="right" th:title="${access.resource.class.simpleName}" th:data-original-title="${access.resource.class.simpleName}"></i>
+							<i th:if="${access.resource.class.simpleName == 'Pipeline'}" class="fa flaticon-technology font-hg font-blue-hoki tooltips" data-container="body" data-placement="right" th:title="Dataflow" th:data-original-title="Dataflow"></i>
+						
+						</td>
+						<td>
+							<input type="text" name="identifications[]" readonly="readonly"  class="form-control"  th:value="${access.resource.identification}"/>
+							<input type="hidden" name="ids[]" th:value="${access.id}"/>
+						</td>
+						<td class="text-center">
+							<i th:if="${access.access.name() == 'MANAGE'}" class="fa fa-cog font-hg font-blue-hoki tooltips" data-container="body" data-placement="right" th:title="${access.access}" th:data-original-title="${access.access}"></i>
+							<i th:if="${access.access.name() == 'VIEW'}" class="la la-eye font-hg font-blue-hoki tooltips" data-container="body" data-placement="right" th:title="${access.access}" th:data-original-title="${access.access}"></i>
+						</td>
+						<!-- <td><input type="text" name="types[]" readonly="readonly"  class="form-control" th:value="${access.access}"/></td> -->
+						<!-- <td>
+							<select name="accesstypes[]" class="form-control select-modal accesstypes" data-live-search="true" data-width="100%" >			
+								<option th:each="access :${accesses}" th:value="${access}" th:text="${access}" ></option>
+							</select>
+						</td> -->
+						<td th:if="${projectObj.app == null}">
+							<input type="text" name="users[]" readonly="readonly"  class="form-control" th:value="${access.user.fullName}  +' ('+ ${access.user.userId} +')'"/>
+						</td>
+						<td th:if="${projectObj.app != null}">
+							<input type="text" name="users[]" readonly="readonly"  class="form-control" th:value="${access.appRole.name}  +' ('+ ${access.appRole.app.appId} +')'"/>
+						</td>											
+						<td width="150px" class="no-wrap text-center">											
+							<button type="button" class="btn btn-sm btn-circle btn-outline blue" th:onclick="'javascript:ProjectCreateController.removeAuthorization(\''+|${access.id}|+'\')'" th:text="#{project.removeauthorization}">Insert Assignment</button>
+						</td>			
+					</tr>
+				</tbody>														
+			</table>
+		</div>
+	</div>
+</div>

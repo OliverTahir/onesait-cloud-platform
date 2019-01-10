@@ -1,0 +1,204 @@
+<gridster-item ng-hide="!vm.editmode && !vm.datastatus && vm.element.showOnlyFiltered" item="vm.element" ng-style="{'background-color':vm.element.backgroundColor, 'border-width': vm.element.border.width + 'px', 'border-color': vm.element.border.color, 'border-radius': vm.element.border.radius + 'px', 'border-style': 'solid'}" ng-class="vm.isMaximized ? 'animate-show-hide widget-maximize': 'animate-show-hide'">
+  <div class="element-container fullcontainer">
+
+      <!-- toolbar header enabled-->
+      <div class="md-toolbar-tools widget-header md-hue-2" flex ng-if="vm.element.header.enable"  ng-style="{'background':vm.element.header.backgroundColor, 'height': vm.element.header.height + 'px'}">                 
+       
+  
+          <!-- gadget icon and title -->
+          <md-icon ng-if="vm.element.header.title.icon" ng-style="{'color':vm.element.header.title.iconColor,'font-size' : '24px'}">{{vm.element.header.title.icon}}</md-icon>
+          <h5 ng-if="vm.element.header.enable" class="gadget-title"  flex ng-style="{'color':vm.element.header.title.textColor}" md-truncate>{{vm.element.header.title.text}}</h5> 
+                            
+          <!-- gadget filter handler -->        
+            <md-icon  ng-if="vm.datastatus" class="cursor-hand" style="margin: 0px 10px 0px 0px;"  tooltips tooltip-show-trigger="click" tooltip-hide-trigger="click" tooltip-class="filter-tooltip" tooltip-close-button="true" tooltip-size="small" tooltip-template-url="app/partials/view/filterTooltip.html" ng-attr-tooltip-side="{{vm.editmode?'bottom':'bottom left'}}">filter_list
+            <md-tooltip>Filter</md-tooltip>
+          </md-icon>
+          
+           <!-- gadget movement handler  -->
+           <md-button ng-if="vm.editmode && vm.element.header.enable" style="margin: 0px;" class="drag-handler md-icon-button">
+            <img src="/controlpanel/static/images/dashboards/Icon_move.svg">
+            <md-tooltip>Move</md-tooltip>
+          </md-button> 
+          <!--trend clock-->
+          <div flex="nogrow" ng-if="vm.element.type == 'trend' || vm.element.type == 'pieTimesSeries'" layout-align="center right">            
+            <md-menu-bar >       
+                <md-menu ng-click="vm.openMenu($mdMenu)" md-position-mode="target-right bottom" md-offset="-4 0">
+                    <button  style="padding: 0px">
+                      <img src="/controlpanel/static/images/dashboards/time.svg">
+                        <md-tooltip>Options</md-tooltip>
+                    </button>
+                    <md-menu-content width="9">               
+                      <md-menu-item style="height: 65px;">
+                          <md-button  md-prevent-menu-close="md-prevent-menu-close" ng-disabled="true" aria-label="Fullscreen" style="height:60px;" >
+                          </button>   
+                            <div ng-if="vm.element.type == 'trend' || vm.element.type == 'pieTimesSeries' " layout="row" layout-padding layout-align="center center" style="height:60px; width: 612px !important;" >
+                               <input ng-if="!vm.timesseriesconfig.realTime" type="datetime-local" ng-model="vm.startDate" >
+                               <label ng-if="!vm.timesseriesconfig.realTime" class="gadget-title">TO</label>
+                               <input ng-if="!vm.timesseriesconfig.realTime" type="datetime-local" ng-model="vm.endDate">
+                               <input ng-if="!vm.timesseriesconfig.realTime" type="button" value="APPLY" class="btn-circle" md-prevent-menu-close="md-prevent-menu-close" ng-click="vm.updateDates()" aria-label="Fullscreen"  />
+                                
+                               <!-- <md-select style="hide" required md-autofocus  placeholder="Select scale" ng-model="vm.timesseriesconfig.timesSeriesinterval" >
+                                  <md-option ng-value="item.key"  ng-selected="index == 0" ng-repeat="(index,item) in vm.arrayTimesSeriesinterval">{{item.key}}</md-option>
+                                </md-select> -->
+                                <md-select ng-if="vm.timesseriesconfig.realTime" required md-autofocus  placeholder="Select scale" ng-model="vm.timesseriesconfig.timesSeriesintervalRealTime" >
+                                  <md-option ng-value="item.value"  ng-selected="index == 0" ng-repeat="(index,item) in vm.arrayTimesSeriesRealTimeinterval">{{item.key}}</md-option>
+                                </md-select> 
+                                <md-switch class="md-primary gadget-title"  md-no-ink ng-model="vm.timesseriesconfig.realTime" aria-label="RealTime">
+                                 Realtime
+                                </md-switch>    
+                                </div>  
+                                     
+                      </md-menu-item>
+                    </md-menu-content>
+                  </md-menu>
+              </md-menu-bar> 
+            </div>  
+          <!-- trend clock-->
+          <!-- gadget toolbar -->
+          <div flex="nogrow" layout-align="center right">            
+          <md-menu-bar >       
+              <md-menu md-position-mode="target-right bottom" md-offset="-4 0">
+                  <button ng-click="$mdMenu.open()" style="padding: 0px">
+                    <img src="/controlpanel/static/images/dashboards/more.svg">
+                      <md-tooltip>Options</md-tooltip>
+                  </button>
+                  <md-menu-content width="3">               
+                    <md-menu-item >
+                        <md-button  ng-click="vm.toggleFullScreen()"  aria-label="Fullscreen">
+                          <img src="/controlpanel/static/images/dashboards/Icon_full.svg">
+                            <span>Fullscreen</span>
+                          </md-button>                
+                    </md-menu-item>
+                    <md-menu-item ng-if="vm.editmode">
+                        <md-button  ng-click="vm.openEditContainerDialog()"  aria-label="Edit Container">
+                          <img src="/controlpanel/static/images/dashboards/style.svg">
+                          <span>Styling</span>
+                          </md-button>             
+                    </md-menu-item>
+                    <md-menu-item ng-if="vm.editmode &&  (vm.element.type == 'livehtml' || vm.element.type == 'html5' )">
+                        <md-button  ng-click="vm.openEditGadgetDialog()"   aria-label="Gadget Editor">
+                          <img src="/controlpanel/static/images/dashboards/edit.svg">
+                          <span>Edit</span>
+                          </md-button>                
+                    </md-menu-item>             
+                    <md-menu-item ng-if="vm.editmode && !vm.iframe && (vm.element.type != 'livehtml' && vm.element.type != 'html5')">
+                        <md-button  ng-click="vm.openEditGadgetIframe()" aria-label="Edit Container">
+                           <img src="/controlpanel/static/images/dashboards/edit.svg">
+                            <span>Edit</span>
+                          </md-button>                 
+                    </md-menu-item>
+                    <md-menu-divider></md-menu-divider>
+                    <md-menu-item ng-if="vm.editmode">
+                        <md-button   ng-click="vm.deleteElement()">
+                          <img src="/controlpanel/static/images/dashboards/delete.svg">                         
+                            <span>Remove</span>                   
+                          </md-button>
+                    </md-menu-item>
+                  </md-menu-content>
+                </md-menu>
+            </md-menu-bar> 
+          </div>           
+      </div>
+      
+      <!-- toolbar when header is disabled -->      
+      <div flex ng-if="!vm.element.header.enable" class="item-buttons">                 
+         
+          <!-- gadget filter handler -->        
+            <md-icon  ng-if="vm.datastatus" layout-align="center right"  class="cursor-hand" style="margin: 8px 6px 0px 0px;"  tooltips tooltip-show-trigger="click" tooltip-hide-trigger="click" tooltip-class="filter-tooltip" tooltip-close-button="true" tooltip-size="small" tooltip-template-url="app/partials/view/filterTooltip.html" ng-attr-tooltip-side="{{vm.editmode?'bottom':'bottom left'}}">filter_list
+            <md-tooltip>Filter</md-tooltip>
+          </md-icon>
+          
+           <!-- gadget movement handler  -->
+           <md-button ng-if="vm.editmode" style="margin: 0px;" class="drag-handler md-icon-button">
+            <img src="/controlpanel/static/images/dashboards/Icon_move.svg">
+            <md-tooltip>Move</md-tooltip>
+          </md-button> 
+ <!--trend clock-->
+ <div flex="nogrow" ng-if="vm.element.type == 'trend' || vm.element.type == 'pieTimesSeries'" layout-align="center right">            
+  <md-menu-bar >       
+      <md-menu ng-click="vm.openMenu($mdMenu)" md-position-mode="target-right bottom" md-offset="-4 0">
+          <button  style="padding: 0px">
+            <img src="/controlpanel/static/images/dashboards/time.svg">
+              <md-tooltip>Options</md-tooltip>
+          </button>
+          <md-menu-content width="9">               
+            <md-menu-item style="height: 65px;">
+                <md-button  md-prevent-menu-close="md-prevent-menu-close" ng-disabled="true" aria-label="Fullscreen" style="height:60px;" >
+                </button>   
+                  <div ng-if="vm.element.type == 'trend' || vm.element.type == 'pieTimesSeries'" layout="row" layout-padding layout-align="center center" style="height:60px;width: 612px !important;" >
+                     <input ng-if="!vm.timesseriesconfig.realTime" type="datetime-local" ng-model="vm.startDate" >
+                     <label ng-if="!vm.timesseriesconfig.realTime" class="gadget-title">TO</label>
+                     <input ng-if="!vm.timesseriesconfig.realTime" type="datetime-local" ng-model="vm.endDate">
+                     <input ng-if="!vm.timesseriesconfig.realTime" type="button" value="APPLY" class="btn-circle" md-prevent-menu-close="md-prevent-menu-close" ng-click="vm.updateDates()" aria-label="Fullscreen"  />
+                      
+                     <!-- <md-select style="hide" required md-autofocus  placeholder="Select scale" ng-model="vm.timesseriesconfig.timesSeriesinterval" >
+                        <md-option ng-value="item.key"  ng-selected="index == 0" ng-repeat="(index,item) in vm.arrayTimesSeriesinterval">{{item.key}}</md-option>
+                      </md-select> -->
+                      <md-select ng-if="vm.timesseriesconfig.realTime" required md-autofocus  placeholder="Select scale" ng-model="vm.timesseriesconfig.timesSeriesintervalRealTime" >
+                        <md-option ng-value="item.value"  ng-selected="index == 0" ng-repeat="(index,item) in vm.arrayTimesSeriesRealTimeinterval">{{item.key}}</md-option>
+                      </md-select> 
+                      <md-switch class="md-primary gadget-title"  md-no-ink ng-model="vm.timesseriesconfig.realTime" aria-label="RealTime">
+                       Realtime
+                      </md-switch>    
+                      </div>  
+                           
+            </md-menu-item>
+          </md-menu-content>
+        </md-menu>
+    </md-menu-bar> 
+  </div>  
+<!-- trend clock-->
+          <!-- gadget toolbar -->
+          <div flex="nogrow" layout-align="center right">            
+          <md-menu-bar >       
+              <md-menu md-position-mode="target-right bottom" md-offset="-4 0">
+                  <button ng-click="$mdMenu.open()" style="padding: 0px">
+                    <img src="/controlpanel/static/images/dashboards/more.svg">
+                      <md-tooltip>Options</md-tooltip>
+                  </button>
+                  <md-menu-content width="3">               
+                    <md-menu-item >
+                        <md-button  ng-click="vm.toggleFullScreen()"  aria-label="Fullscreen">
+                          <img src="/controlpanel/static/images/dashboards/Icon_full.svg">
+                            <span>Fullscreen</span>
+                          </md-button>                
+                    </md-menu-item>
+                    <md-menu-item ng-if="vm.editmode">
+                        <md-button  ng-click="vm.openEditContainerDialog()"  aria-label="Edit Container">
+                          <img src="/controlpanel/static/images/dashboards/style.svg">
+                          <span>Styling</span>
+                          </md-button>             
+                    </md-menu-item>
+                    <md-menu-item ng-if="vm.editmode && (vm.element.type == 'livehtml' || vm.element.type == 'html5' )">
+                        <md-button  ng-click="vm.openEditGadgetDialog()"   aria-label="Gadget Editor">
+                          <img src="/controlpanel/static/images/dashboards/edit.svg">
+                          <span>Edit</span>
+                          </md-button>                
+                    </md-menu-item>             
+                    <md-menu-item ng-if="vm.editmode && !vm.iframe && (vm.element.type != 'livehtml' && vm.element.type != 'html5')">
+                        <md-button  ng-click="vm.openEditGadgetIframe()" aria-label="Edit Container">
+                           <img src="/controlpanel/static/images/dashboards/edit.svg">
+                            <span>Edit</span>
+                          </md-button>                 
+                    </md-menu-item>
+                    <md-menu-divider></md-menu-divider>
+                    <md-menu-item ng-if="vm.editmode">
+                        <md-button   ng-click="vm.deleteElement()">
+                          <img src="/controlpanel/static/images/dashboards/delete.svg">                         
+                            <span>Remove</span>                   
+                          </md-button>
+                    </md-menu-item>
+                  </md-menu-content>
+                </md-menu>
+            </md-menu-bar> 
+          </div>           
+      </div>
+     
+    <!--<div ng-bind-html="vm.trustHTML(vm.element.content)" class="fullcontainer" flex ng-style="{'background-color':vm.element.backgroundColor, 'padding': vm.element.padding + 'px', 'height': vm.calcHeight()}">
+    </div>  height del gadget era: vm.calcHeight() -->
+    <livehtml  ng-style="{'background-color':vm.element.backgroundColor, 'padding': vm.element.padding + 'px', 'height': vm.calcHeight()}" ng-if="vm.element.type == 'livehtml'" livecontent="vm.element.content" datasource="vm.element.datasource"  ng-class="vm.element.header.enable === true ? 'headerMargin {{vm.element.id}} {{vm.element.type}}' : 'noheaderMargin {{vm.element.id}} {{vm.element.type}}'"    id="vm.element.id" datastatus="vm.datastatus"></livehtml>
+    <gadget  ng-style="{'background-color':vm.element.backgroundColor, 'padding': vm.element.padding + 'px', 'display': 'inline-block', 'width': 'calc(100% - 40px)', 'position': 'absolute','top': '50%','left': '50%','transform': 'translate(-50%, -50%)','height': vm.calcHeight()}" ng-if="vm.element.type != 'livehtml'&& vm.element.type != 'html5'" ng-class="vm.element.header.enable === true ? 'headerMargin {{vm.element.id}} {{vm.element.type}}' : 'noheaderMargin {{vm.element.id}} {{vm.element.type}}'" id="vm.element.id" timesseriesconfig="vm.timesseriesconfig"  ></gadget>
+    <html5  ng-style="{'background-color':vm.element.backgroundColor, 'padding': vm.element.padding + 'px', 'height': vm.calcHeight()}" ng-if="vm.element.type == 'html5'" livecontent="vm.element.content" datasource="vm.element.datasource"  ng-class="vm.element.header.enable === true ? 'headerMargin {{vm.element.id}} {{vm.element.type}}' : 'noheaderMargin {{vm.element.id}} {{vm.element.type}}'"    id="vm.element.id" datastatus="vm.datastatus"></html5>
+    
+  </div>
+</gridster-item>

@@ -1,0 +1,113 @@
+server:
+  port: 20100
+  contextPath: /flowengine
+
+# all access to actuator endpoints without security
+management.security.enabled: false
+
+spring:
+  application.name: onesaitplatform-flow-engine
+  ## JPA Config
+  datasource:
+    url: jdbc:mysql://localhost:3306/onesaitplatform_config?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&autoReconnect=true
+    username: root
+    password: changeIt!
+    driver-class-name: com.mysql.jdbc.Driver
+    test-while-idle: true
+    test-on-borrow: true
+    validation-query: SELECT 1      
+    tomcat:
+      # Number of ms to wait before throwing an exception if no connection is available.
+      max-wait: 10000
+      # Maximum number of active connections that can be allocated from this pool at the same time.
+      max-active: 50
+  jpa:
+    ## Hibernate Properties
+    # The SQL dialect makes Hibernate generate better SQL for the chosen database
+    properties.hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    # Hibernate ddl auto (create, create-drop, validate, update)
+    hibernate.ddl-auto: validate
+  boot.admin: #Spring Boot Admin Config 
+    url: http://localhost:18100
+    username: operations
+    password: changeIt!
+    client.metadata.user.name: ${spring.boot.admin.username}
+    client.metadata.user.password: ${spring.boot.admin.password}
+    service-base-url: http://localhost:20100
+    client.service-url: http://localhost:20100
+
+onesaitplatform:
+   router.avoidsslverification: true
+   router.alternativeURL: http://localhost:20000/router/router/
+   
+   flowengine:
+      sync.monitor:
+         interval.sec: 30
+         initial.delay.sec: 20
+      admin.url: http://localhost:10000
+      node.path: node
+      audit.enabled: true
+      launcher:
+         #path: S:\\tools\\node-red\\Flow-Engine-Manager\\
+         path: /opt/nodeRed/Flow-Engine-Manager
+         job: app.js
+         debbugin: true
+         #log: \\tmp\\logs\\flowEngine
+         log: /tmp/logs/flowEngine
+         failsbeforestop:
+            max: 10
+            time.millis: 60000
+         reboot.delay.seconds: 10
+         port:
+            domain:
+               min: 28000
+               max: 28500
+            service:
+               min: 27000
+               max: 27500
+      services:
+         domain:
+            status: /getDomainStatusMF
+            getall: /getAllDomainMF
+            get: /getDomainMF
+            create: /createDomainMF
+            delete: /deleteDomainMF
+            start: /startDomainMF
+            stop: /stopDomainMF
+         stop.admin: /stopMF
+         sync: /synchronizeMF
+         request.timeout.ms: 5000
+   database.mongodb:
+      database: onesaitplatform_rtdb
+      authenticationDatabase:  #admin
+      servers: localhost:27017
+      autoConnectRetry: true
+      socketTimeout: 5000
+      maxAutoConnectRetryTime: 5000
+      maxWaitTime: 5000
+      useAuth: false
+      username: #username
+      password: #password
+      readFromSecondaries: false
+      queries.executionTimeout: 5000
+      queries.defaultLimit: 1000
+      queries.maxConcurrentQueries: 3
+      writeConcern: UNACKNOWLEDGED
+      tools.mongoexport.path: mongoexport
+      tools.mongoimport.path: mongoimport
+      tools.mongoshell.path: mongo
+      tools.useSequentialOps: true
+   database.elasticsearch:
+      database: onesaitplatform_rtdb_es
+      sql.maxHttpConnections: 10
+      sql.maxHttpConnectionsPerRoute: 10
+      sql.connectionTimeout.millis: 10000
+      sql.connector.http.endpoint: http://localhost:9200
+      url: localhost
+      port: 9300     
+## LOGGING CONF
+logging:
+   path: ./target/ 
+   file: ${spring.application.name}
+   level:
+      com.minsait: DEBUG

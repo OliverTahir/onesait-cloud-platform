@@ -1,0 +1,39 @@
+---
+
+- name: Pull Rancher 1.6 image and start container
+  template: src=.env dest="{{ root_directory }}/onesaitplatform/rancher"  
+  
+- name: Copy docker-compose for Rancher server
+  template: src=docker-compose.yml dest="{{ root_directory }}/onesaitplatform/rancher" mode=0755  
+
+- name: Run docker-compose for Rancher server
+  command: chdir={{ root_directory }}/onesaitplatform/rancher docker-compose up -d
+
+- name: Download Rancher CLI in /tmp
+  get_url:
+    url: https://releases.rancher.com/cli/v0.6.11/rancher-linux-amd64-v0.6.11.tar.gz
+    dest: /tmp
+
+- name: Un-tar Rancher CLI
+  unarchive:
+    src: /tmp/rancher-linux-amd64-v0.6.11.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+- name: Move Rancher CLI to /bin
+  command: mv /tmp/rancher-v0.6.11/rancher /bin/rancher
+
+- name: Set Rancher CLI permissions
+  file:
+    path: /bin/rancher
+    mode: 0755
+
+- name: Remove Rancher CLI install resource - Step 1
+  file:
+    state: absent
+    path: /bin/rancher-v0.6.11
+
+- name: Remove Rancher CLI install resource - Step 2
+  file:
+    state: absent
+    path: /bin/rancher-linux-amd64-v0.6.11.tar.gz

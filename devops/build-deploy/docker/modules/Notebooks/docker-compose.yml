@@ -1,0 +1,11 @@
+version: "2.1"
+
+services:
+  zeppelin:
+    networks:
+      - data_datanetwork
+    container_name: zeppelin
+    image: ${REPOSITORY}onesaitplatform/zeppelin:${MODULE_TAG}
+networks:
+  data_datanetwork:
+    external: true

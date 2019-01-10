@@ -1,0 +1,20 @@
+spring:
+  boot.admin: #Spring Boot Admin Config    
+    url: http://monitoringuiservice:18100/monitoring  
+    client.service-url: http://videobrokerservice:${server.port}${server.contextPath}/ 
+  datasource:  
+    url: jdbc:mysql://${CONFIGDBHOST}:${CONFIGDBPORT}/onesaitplatform_config?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&autoReconnect=true
+
+onesaitplatform:
+  kafka:
+    enable: ${KAFKAENABLED}
+    host: ${KAFKAHOST}
+    port: ${KAFKAPORT}  
+    user: ${KAFKAUSER}
+    password: ${KAFKAPASSWORD}
+    partitions: 10
+    replication: 1
+
+## LOGGING CONF
+logging:
+   path: /var/log/platform-logs 

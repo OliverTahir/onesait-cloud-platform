@@ -1,0 +1,20 @@
+version: "2.1"
+
+services:         
+  controlpanelservice:
+    image: ${REPOSITORY}onesaitplatform/controlpanel:${MODULE_TAG}
+    container_name: controlpanelservice 
+    environment:
+      - REALTIMEDBUSEAUTH=false          
+    networks:
+      - data_datanetwork
+    ports:
+     - "8091:18000"
+    external_links:
+     - configdb
+     - schedulerdb
+     - realtimedb 
+     - elasticdb
+networks:
+  data_datanetwork:
+    external: true

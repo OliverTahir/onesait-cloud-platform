@@ -1,0 +1,109 @@
+version: '2'
+volumes:
+  grafana-data:
+    external: true
+    driver: local
+  prometheus-data:
+    external: true
+    driver: local
+services:
+  node-exporter:
+    image: prom/node-exporter:latest
+    stdin_open: true
+    tty: true
+    labels:
+      io.rancher.scheduler.affinity:host_label: node=worker-2
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.global: 'true'
+  prom-conf:
+    image: infinityworks/prom-conf:20
+    network_mode: none
+    volumes:
+    - /etc/prom-conf/
+    tty: true
+    links:
+    - node-exporter:node-exporter
+    - prometheus-rancher-exporter:prometheus-rancher-exporter
+    - cadvisor:cadvisor
+    labels:
+      io.rancher.scheduler.affinity:host_label: node=worker-2
+      io.rancher.container.pull_image: always
+  grafana:
+    image: grafana/grafana:5.0.0
+    environment:
+      GF_SERVER_ROOT_URL: http://grafana:3000/grafana
+    volumes:
+    - /datadrive/onesaitplatform/grafana:/var/lib/grafana:rw
+    tty: true
+    links:
+    - prometheus:prometheus
+    - prometheus-rancher-exporter:prometheus-rancher-exporter
+    volumes_from:
+    - graf-db
+    ports:
+    - 3000:3000/tcp
+    labels:
+      io.rancher.scheduler.affinity:host_label: node=worker-2
+      io.rancher.sidekicks: graf-db
+      io.rancher.container.pull_image: always
+  cadvisor:
+    image: google/cadvisor:latest
+    stdin_open: true
+    volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
+    tty: true
+    labels:
+      io.rancher.scheduler.affinity:host_label: node=worker-2
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.global: 'true'
+  prometheus-rancher-exporter:
+    image: infinityworks/prometheus-rancher-exporter:v0.22.52
+    tty: true
+    labels:
+      io.rancher.scheduler.affinity:host_label: node=worker-2
+      io.rancher.container.agent.role: environment
+      io.rancher.container.create_agent: 'true'
+      io.rancher.container.pull_image: always
+  prometheus:
+    image: prom/prometheus:v2.1.0
+    volumes:
+    - prometheus-data:/prometheus
+    tty: true
+    extra_hosts:
+    - rancher-server:0.0.0.0
+    links:
+    - node-exporter:node-exporter
+    - prometheus-rancher-exporter:prometheus-rancher-exporter
+    - cadvisor:cadvisor
+    volumes_from:
+    - prom-conf
+    ports:
+    - 9090:9090/tcp
+    command:
+    - --config.file=/etc/prom-conf/prometheus.yml
+    - --storage.tsdb.path=/prometheus
+    - --web.console.libraries=/etc/prometheus/console_libraries
+    - --web.console.templates=/etc/prometheus/consoles
+    - --web.route-prefix=/prometheus
+    - --web.external-url=http://s4citiespro.westeurope.cloudapp.azure.com/prometheus
+    labels:
+      io.rancher.scheduler.affinity:host_label: node=worker-2
+      io.rancher.sidekicks: prom-conf
+      io.rancher.container.pull_image: always
+  graf-db:
+    image: infinityworks/graf-db:11
+    network_mode: none
+    volumes:
+    - grafana-data:/var/lib/grafana/
+    tty: true
+    links:
+    - prometheus:prometheus
+    - prometheus-rancher-exporter:prometheus-rancher-exporter
+    command:
+    - cat
+    labels:
+      io.rancher.scheduler.affinity:host_label: node=worker-2
+      io.rancher.container.pull_image: always

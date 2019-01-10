@@ -1,0 +1,501 @@
+<!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables" th:with="lang=${#locale.language}" th:lang="${lang}">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+		<meta http-equiv="Content-Language" th:content="${lang}"/>
+		<title th:text="#{name.app}"/>
+
+		
+		<!-- WEB FONTs -->
+		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+		<script>
+          WebFont.load({
+            google: {"families":["Poppins:300,400,500,600,700","Open Sans:300,400,500,600,700"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+          });
+          var mapKsqlRelation = new Map();
+		</script>
+
+		<!-- STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
+		<!-- THEME -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
+
+		<!-- PLUGINS STYLE SHEETS: BOOSTRAP-SELECT AND BOOSTRAP-TIMEPICKER  -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker3.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>	
+		
+	</head>	
+	
+	<!-- page-sidebar-closed to START WITH MENU COLLAPSED. -->
+	<body class="page-header-fixed  page-content-white page-sidebar-closed">
+
+	<!-- MAIN PAGE WRAPPER -->
+	<div class="page-wrapper">
+	
+		<!-- BEGIN HEADER INCLUDE -->
+		<div th:include="fragments/header::#headerFragment" class="page-header navbar navbar-fixed-top"></div>
+		<!-- END HEADER -->
+		
+		<!-- HEADER AND CONTENT DIVIDER -->
+		<div class="clearfix"> </div>
+			
+		<!-- BEGIN SIDEBAR INCLUDE (MENU) -->
+		<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>
+		<!-- END SIDEBAR -->
+			
+		<!-- BEGIN CONTENT -->
+		<div class="page-content-wrapper">
+			
+			<!-- BEGIN CONTENT BODY -->
+			<div class="page-content">
+			
+                <div class="alert alert-success display-hide">
+					<span th:text="${globalMessage}"></span>
+				</div>		
+				
+				<!-- BEGIN PAGE BAR AND BREADCRUM-->
+				<div class="page-bar margin-bottom-20">
+					<ul class="page-breadcrumb">
+						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
+						<li><a th:href="@{/ksql/flow/list}"> <span th:text="#{ksql.flow.breadcrumb.prev}">KSQL Flow List</span></a><i class="fa fa-circle"></i></li>
+						<li>
+							<span th:text="#{ksql.flow.breadcrumb.create}">Show domain</span>
+						</li>
+					</ul>						
+				</div>
+				<!-- END PAGE BAR -->
+				
+				<!-- BEGIN PAGE TITLE-->
+				<h1 class="page-title hide "><span th:text="#{name.app}"> Sofia4Cities Control Panel</span></h1>
+				<!-- END PAGE TITLE-->			
+				
+				<!-- MAIN ROW -->
+				<div class="row">
+					<div class="col-md-12">						
+						<div class="portlet light bordered">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="la la-users font-grey-gallery"></i>						
+									
+									<!-- FORM TITLE -->
+									<span class="caption-subject font-grey-gallery uppercase" th:text="#{ksql.flow.template.create} + ':'"> New KSQL Flow</span>
+								</div>									
+								<div class="tools">
+									<a href="" class="collapse" data-original-title="" title=""> </a>																			
+									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
+								</div>
+								<div class="actions">
+									<!-- ACTION INDICATORs -->									
+									<span class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.mode.insert}">Insert</span></span>
+								</div>
+								
+							</div>
+							<div class="portlet-body" style="display: block; height: auto;">
+								
+								<div class="row">
+									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->
+										<div class="alert alert-danger display-hide">
+											<button class="close" data-close="alert"></button> 
+											<span th:text="#{gen.form.error}">You have some form errors. Please check below.</span>
+										</div>										
+                                        <div class="alert alert-success display-hide">
+											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.success}">Your form validation is successful!</span>
+										</div>								
+									</div>
+									<div class="col-md-12">										
+										<form role="form" id="ksql_flow_create_form" th:object="${ksqlFlow}" method="post" class="form">
+											<!-- FORM ACTIONS FOR INSERT-->
+											<!-- FORM ACTIONS FOR INSERT-->
+												<input th:if="${ksqlFlow.id} == null" type="hidden" name="actions" th:value="@{/ksql/flow/create}"/>
+												
+												<!-- FORM ACTIONS FOR UPDATE -->											
+												<input th:if="${ksqlFlow.id} != null" type="hidden" name="actions" th:value="@{/ksql/flow/update}"/>
+												<input th:if="${ksqlFlow.id} != null" type="hidden" name="_method" value="PUT"/>											
+											
+											<div class="form-body">
+												<!-- domain identification -->
+												<div class="row">
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label th:text="#{ksql.flow.identification} + ':'">Identification</label>
+															<div class="input-icon ">
+																<i class="fa fa-credit-card"></i>
+																<input id="identification" type="text" name="identification" th:required="true"  maxlength="50" th:field="*{identification}" onblur="KsqlFlowCreateController.checkProperty(this)" class="form-control " th:placeholder="#{ksql.flow.identification}"  th:readonly="*{identification}" th:classappend="${ksqlFlow.identification} ? no-remove : ''"  />
+																<input id="jsontext" type="hidden" name="jsontext" th:required="true"  maxlength="50" th:field="*{jsonFlow}"  th:readonly="*{jsonFlow}"  />
+																<input id="flowId" type="hidden" name="flowId" th:required="true"  maxlength="50" th:field="*{id}"  th:readonly="*{id}"  />
+															</div>															
+														</div>
+													</div>
+													<div class="col-md-12 col-sm-12 col-xs-12">
+														<div class="form-group">
+															<label th:text="#{ksql.flow.description} + ':'">Comments </label><span class="required"> (*)</span>
+															<textarea th:tabindex="3" class="element textarea small form-control" id="description" name="description" maxlength="512" th:field="*{description}" th:required="true"  cols="" rows=""></textarea>
+														</div>
+														<span class="help-block"><i class="la la-warning"></i> <small th:text="#{ksql.flow.description.min}"></small></span>
+													</div>
+												</div>
+											</div>
+											<!-- FORM BUTTONS -->
+											<div class="form-actions">
+												<div class="pull-right">
+													<!-- CREATE -->
+													<button th:if="${ksqlFlow.identification} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+													
+													<!-- UPDATE -->
+													<button th:if="${ksqlFlow.identification} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}" > Edit</span></button>
+														
+													<!-- REMOVE -->
+													<button th:if="${ksqlFlow.id} != null" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'KsqlFlowCreateController.deleteKsqlFlow(\'' + ${ksqlFlow.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+																										
+													<!-- RESET -->
+													<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
+													
+													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
+													
+													<!-- CANCEL TO-DO: authentication and control -->
+													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:KsqlFlowCreateController.go(\'' + @{/} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:KsqlFlowCreateController.go(\'' + @{/ksql/flow/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+												</div>
+											</div>											
+										</form>
+										<!-- AUXILIAR FORM TO DELETE KSQL FLOW -->
+										<form id="delete_ksql_flow_form" class="delete-user hide"  th:action="@{'/ksql/flow/'+${ksqlFlow.id}}"  method="post">
+											<input type="hidden" name="_method" value="DELETE"/>
+											<input type="hidden" name="ksqlFlowId" th:value="${ksqlFlow.id}"/>
+										</form>	
+									</div>							
+								</div>
+							</div>
+						</div><!-- END PORTLET BASIC  -->
+						<!-- RELATION LIST -->
+						<div class="portlet light bordered">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="icon-list font-grey-gallery"></i>
+									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{ksql.flow.template.list}"> My KSQL Flows </span>
+									<!-- <span class="caption-helper">Subtitulo de contenedor</span> -->
+								</div>									
+								<div class="tools">
+									<a href="" class="collapse" data-original-title="" title=""> </a>
+									<a href="" class="fullscreen" data-original-title="" title=""> </a>
+								</div>								
+								<div class="actions margin-right-20">
+									<div class="btn-group">									
+										<button id="search-toggle" type="button" class="btn grey-mint sbold btn-outline" onclick="$('#searchFilter').toggleClass('hide')"><i class="fa fa-search"></i> <span th:text="#{gen.search}"> Search </span></button>									
+										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" type="button" class="btn grey-mint  btn-outline sbold" onclick="KsqlFlowCreateController.enableCreationModal('create')" ><i class="fa fa-plus"></i> <span th:text="#{gen.create}">New </span></button>									
+									</div>										
+								</div>								
+							</div>
+							<div class="portlet-body" style="display: block; height: auto;">
+								<div class="row">
+									<div class="col-md-12 alert-zone">
+										<!-- ALERT ZONE -->																			
+									</div>
+									<div class="col-md-12">
+									<!-- SEARCH FORM -->
+										<form id="form_ksqlrelations" class="" role="form" method="get">											
+											<div id="searchFilter" class="form-body hide" style="border-bottom: 1px solid #eef1f5;">
+												<div class="row">
+													<div class="col-md-4 col-xs-12">
+														<div class="form-group">															
+															<div class="input-group">
+																<span class="input-group-addon">
+																	<i class="fa fa-tag font-grey-mint"></i>
+																</span>															
+																<input id="relationIdentification" th:placeholder="#{ksql.relation.identification}" name="relationIdentification" class="form-control" type="text" maxlength="50" value=""/>
+															</div>
+														</div>
+													</div>
+													<div class="col-md-4 col-xs-12">
+														<div class="form-group">															
+															<div class="input-group">
+																<span class="input-group-addon">
+																	<i class="fa fa-tag font-grey-mint"></i>
+																</span>
+																<input id="relationDescription" th:placeholder="#{ksql.relation.description}" name="relationDescription" class="form-control" type="text" maxlength="100" value=""/>
+															</div>
+														</div>
+													</div>
+													<div class="col-md-4 col-xs-12">
+														<div class="btn-group">
+															<button type="button" id="search_ksqlrelations" name="search_ksqlrelations" th:title="#{gen.search}" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> <em th:text="#{gen.search}">Search</em></button>
+															<button type="button" id="reset_ksqlrelations" name="reset_ksqlrelations" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>
+														</div>
+													</div>
+												</div>
+											</div>												
+										</form>								
+									</div>
+									<div class="col-md-12">	
+										<!-- KSQL RELATIONS LIST FORM -->
+										<div id="contenedor-tabla-outside" class="contiene margin-bottom-30">																						
+											<div>
+												<!-- DATATABLE DANDELION CONF. -->												
+												<table id="ksqlRelations" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
+													<thead>
+														<tr class="cabecera-tabla">
+															<th class="titulo-columnas" th:text="#{ksql.relation.identification}">Identification</th>
+															<th class="titulo-columnas" th:text="#{ksql.relation.description}">Description</th>
+															<th class="titulo-columnas" th:text="#{ksql.relation.type}">Relation type</th>
+															<th class="titulo-columnas" th:text="#{ksql.relation.ksql.type}">Ksql type</th>
+															<th class="titulo-columnas" th:text="#{ksql.relation.ksql.statement}">Statement</th>
+															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{ksql.flow.createdAt}"> Created At </span></th>
+															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
+														</tr>
+													</thead>
+													<tbody th:remove="all-but-first">
+														<tr th:each="ksqlRelation : ${ksqlRelations}" pages:paginate="10">
+															<!-- IDENTIFICATION/NAME -->
+															<td class="text-left no-wrap " th:text="${ksqlRelation.ksqlResource.identification}"></td>
+															<!-- DESCRIPTION -->
+															<td class="text-left text-truncate-sm" th:title="${ksqlRelation.ksqlResource.description}" th:text="${ksqlRelation.ksqlResource.description}"></td>
+															<!-- RELATION TYPE -->
+															<td class="text-center " th:text="${ksqlRelation.ksqlResource.resourceType}"></td>
+															<!-- KSQL TYPE -->
+															<td class="text-center " th:text="${ksqlRelation.ksqlResource.ksqlType}"></td>
+															<!-- STATEMENT -->
+															<td class="text-center " th:text="${ksqlRelation.ksqlResource.statemetnText}"></td>
+															<!-- DATE -->
+															<td class="text-center" th:if="${ksqlRelation.createdAt!=null}" th:text="${#dates.format(ksqlRelation.createdAt,'dd/MM/YYYY')}"></td>
+															<td class="text-center" th:if="${ksqlRelation.createdAt==null}" th:text="${ksqlRelation.createdAt}"></td>
+															<!-- OPTIONS -->
+															<td class="icon" style="white-space: nowrap">
+																<div class="grupo-iconos">
+																	<!-- VIEW -->															
+																	<span  th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:KsqlFlowCreateController.enableCreationModal(\'view\',\''+@{|${ksqlRelation.id}|}+'\');'"><i class="fa fa-eye"></i></span>
+																																																			
+																	<!-- EDIT -->
+																	<span  th:if="(${#authentication.name} == ${ksqlFlow.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')" class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:KsqlFlowCreateController.enableCreationModal(\'edit\',\''+@{|${ksqlRelation.id}|}+'\');'"><i class="fa fa-edit"></i></span>
+																	<!-- DELETE -->
+																	<span  th:if="(${#authentication.name} == ${ksqlFlow.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')" class="btn btn-sm btn-danger sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.deleteBtn}" th:data-original-title="#{gen.deleteBtn}" th:onclick="'javascript:KsqlFlowCreateController.deleteKsqlRelation(\'' + @{|${ksqlRelation.id}|} + '\');'"><i class="fa fa-trash"></i></span>
+																	
+																</div>
+															</td>
+															<script  th:inline="javascript">
+																var element = {};
+																element.id = [[${ksqlRelation.ksqlResource.id}]];
+																element.identification = [[${ksqlRelation.ksqlResource.identification}]];
+																element.description = [[${ksqlRelation.ksqlResource.description}]];
+																element.statement = [[${ksqlRelation.ksqlResource.statemetnText}]];
+																element.resourceType = [[${ksqlRelation.ksqlResource.resourceType}]];
+																element.ksqlType = [[${ksqlRelation.ksqlResource.ksqlType}]];
+																element.ontology = [[${ksqlRelation.ksqlResource.ontology}]];
+																mapKsqlRelation.set([[${ksqlRelation.id}]],element);
+															</script>
+														</tr>
+													</tbody>
+												</table>												
+												<!-- TABLE COLUMNS CONTAINER SHOW/HIDE -->
+												<div id="dataTable-vis-toggle" class="btn-group margin-left-10 hide">
+													<a href="javascript:;" data-toggle="dropdown" aria-expanded="false" class="btn btn-square btn-sm btn-default ">
+														<i class="fa fa-eye"></i> <em th:text="#{gen.columns}">Columns</em> <i class="fa fa-angle-down"></i>
+													</a>
+													<div id="column_toggler" data-container="body" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
+														<label class="toggle-vis" data-column="0" th:text="#{ksql.relation.identification}"> Identification </label>
+														<label class="toggle-vis" data-column="1" th:text="#{ksql.relation.description}"> Description</label>
+														<label class="toggle-vis" data-column="2" th:text="#{ksql.relation.type}"> Resource Type </label>
+														<label class="toggle-vis" data-column="3" th:text="#{ksql.relation.ksql.type}"> Resource Type </label>
+														<label class="toggle-vis" data-column="4" th:text="#{ksql.relation.ksql.statement}"> KSQL Statement Type </label>
+														<label class="toggle-vis" data-column="5" th:text="#{ksql.flow.createdAt}"> Created At</label>
+														<label class="toggle-vis" data-column="6" th:text="#{gen.options}" > Options</label>															
+													</div>
+												</div>												
+											</div>
+										</div>	
+										<!-- AUXILIAR FORM TO DELETE KSQL RELATION -->
+										<form id="delete_ksql_relation_form" class="delete-user hide"  action="/ksql/relation/"  method="post">
+											<input type="hidden" name="_method" value="DELETE"/>
+											<input type="hidden" name="ksqlRelationId" value=""/>
+										</form>	
+									</div>
+								</div>
+							</div>
+						</div> <!-- END OF SECOND PORTLET -->	
+					</div><!-- END COL-12 -->						
+				</div><!-- END MAIN ROW -->
+				<!-- MODAL CREATE/EDIT RELATION -->
+				<div id="dialog-relation" title="EditRelation" th:title="#{ksql.relation.modal.tittle.create}" tabindex="-1" role="dialog" class="modal fade" style="display: none;">
+					<div class="modal-dialog">
+					    <!-- Modal content-->
+					    <div class="modal-content">					
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+								<h4 id="modal-tittle" class="modal-title" th:text="#{ksql.relation.modal.tittle.create}"></h4>
+							</div>
+							<div class="modal-body">
+								<div>
+				                	<label class="description" th:text="#{ksql.relation.type}"></label>
+				                	<select id="id_relation_type" style="margin-right: 20px;margin-left: 10px;width:95%;padding-right:5px;" class="element select small form-control" onchange="KsqlFlowCreateController.resourceTypeSwitchCreationModal(this)">
+				                     	<option value="ORIGIN" th:text="#{ksql.relation.type.origin}" selected="selected"/>
+				                     	<option value="PROCESS" th:text="#{ksql.relation.type.process}"/>
+				                     	<option value="DESTINY" th:text="#{ksql.relation.type.destiny}"/>
+				                	</select>
+				                	<br/><br/>
+				                </div>
+				                <div>
+				                	<label id="label_relation_origin_ontology" class="description" th:text="#{ksql.relation.ontology.origin}"></label>
+				                	<label id="label_relation_destination_ontology" class="description" th:text="#{ksql.relation.ontology.destiny}" style="display: none;"></label>
+				                	<select id="id_relation_ontology_selector" style="margin-right: 20px;margin-left: 10px;width:95%;padding-right:5px;" class="element select small form-control" onchange="KsqlFlowCreateController.selectRelationOntology(this)">
+				                     	<option th:each="ontology : ${ontologies}" th:value="${ontology.identification}" th:text="${ontology.identification}"/>
+				                	</select>
+				                	<br/><br/>
+				                </div>
+					                <div>
+					                <label class="description" th:text="#{ksql.relation.description}"></label>
+					                <input id="id_relation_description" name="id_relation_description" class="element text medium form-control" style="margin-left: 10px; margin-right: 20px; width: 95%" type="text" maxlength="50"/>
+					                <input id="id_relation_id" type="hidden" name="id_relation_description" class="element text medium form-control"/>
+					                <br/><br/>
+				                </div>
+				                <div>
+				                	<label class="description" th:text="#{ksql.relation.ksql.statement}" th:title="#{ksql.relation.ksql.statement}"></label>
+				                	<textarea style="margin-left: 10px; margin-right: 20px; width: 95%" id="id_relation_statement" th:title="#{ksql.relation.ksql.statement}" name="id_relation_statement" class="form-control" maxlength="512" rows="4" ></textarea>
+				                	<br/><br/>
+				                </div>				
+							</div>					
+							<div class="modal-footer">
+						        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						        <button id="modalCreateButton" type="button" class="btn btn-primary" th:onclick="'javascript:KsqlFlowCreateController.createRelation();'" th:text="#{ksql.relation.modal.tittle.create}">Create KSQL Resource</button>
+						        <button id="modalEditButton" type="button" class="btn btn-primary" th:onclick="'javascript:KsqlFlowCreateController.updateRelationChanges();'" th:text="#{ksql.relation.modal.tittle.edit}" style="disbled:true;">Save changes</button>
+							</div>
+						</div>
+					</div>
+				</div><!-- END OF MODAL -->
+			</div><!-- END CONTENT BODY -->
+		</div><!-- END CONTENT page-content-wrapper -->		
+	</div>
+	<!-- END MAIN PAGE WRAPPER -->
+	
+	<!-- FOOTER INCLUDE -->
+	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>
+	
+	<!-- CORE JS CONTROLLERS -->
+	<script th:src="@{/static/js/app.js}"/>
+	<script th:src="@{/static/js/layout.js}"/>
+	
+	<!-- PLUGINS -->
+	<script th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}"/>
+	<script th:src="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js}"/>
+	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
+	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>	
+	<script th:src="@{/static/vendor/jquery/jquery.autocomplete.js}"/>
+	<!-- LOADING DEFAULT DATES IF NEEDED -->
+	<script th:if="${lang} == 'es'" th:src="@{/static/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js}" type="text/javascript"></script>
+	<script th:src="@{/static/vendor/jquery-validation/jquery.validate.min.js}" type="text/javascript"></script>
+    <script th:src="@{/static/vendor/jquery-validation/additional-methods.min.js}" type="text/javascript"></script>
+	
+	<!-- LOADING DEFAULT LANG MESSAGES IF NEEDED -->
+	<script th:if="${lang} == 'es'" th:src="@{/static/vendor/jquery-validation/localization/messages_es.min.js}" type="text/javascript"></script>
+		
+	<!-- TEMPLATE CONTROLLER  -->	
+	<script th:src="@{/static/js/pages/ksqlFlowCreate.js}"/>
+		
+		
+	<script th:inline="javascript">	
+	
+	// TEMPLATE SEARCH FORM.
+	var search = new Array();
+	var search = [[${param.identification}]] || [];
+	var description = [[${param.description}]] || '';
+	
+	search[0] ? $('#relationIdentification').val(search[0]) : search[0] = '';
+	description ? $('#relationDescription').val(description) : description = '';
+	console.log('SEARCHING ... [ Identification: ' + search[0] + ' Description: ' + description + ']');
+	if (( search[0] != '') || (description != '')) { $('#search-toggle').trigger('click'); }
+	
+	// DATATABLES LANGUAJE FROM PROPERTIES.
+	datatable_lang = [[#{datatables_lang}]];	
+	var languageJson = JSON.parse(datatable_lang);
+	if ( languageJson ){ $.extend( true, $.fn.dataTable.defaults, { language: languageJson }); }
+
+	</script>
+	
+	<script type="text/javascript">	
+		//var optionName = 'ONTOLOGIES';	
+		var optionName = 'KSQL RELATIONS';
+		
+		//<![CDATA[
+		function navigateUrl(url){  window.location.href = url;	}
+		
+		// MAIN WHEN READY
+		$( document ).ready(function() {
+		
+		
+			// AUTO COMPLETE ON KSQL FLOWS IDENTIFICATION/NAME
+			$.ajax({ url: "/controlpanel/ksql/relation/getNamesForAutocomplete", type: 'POST', dataType: 'json', contentType: 'text/html', mimeType: 'application/json',
+				success: function (source) {			 
+							var namesArray = new Array();
+							for( var i = 0; i < source.length; i++ ){
+								namesArray[i] = { value: source[i] , data: source[i]};
+							}
+							
+							// INIT AJAX AUTO COMPLETE
+					$('#relationIdentification').autocomplete({ 
+						lookup: namesArray,
+						lookupFilter: function(suggestion, originalQuery, queryLowerCase) {
+							var re = new RegExp('\\b' + $.Autocomplete.utils.escapeRegExChars(queryLowerCase), 'gi');
+							return re.test(suggestion.value);
+						}	
+					});
+				}
+			});
+			
+			//SHOW/HIDE DATATABLE COLUMNS HANDLER
+			$('label.toggle-vis').on( 'click', function (e) {
+				e.preventDefault(); 
+				// Get the column API object
+				var column = $('#ksqlRelations').DataTable().column( $(this).attr('data-column') ); 
+				// Toggle the visibility
+				column.visible( ! column.visible() );			
+				// toggle Text
+				$(this).toggleClass('text-muted line-through');			
+			});	
+			
+			// SEARCH FORM RESET
+			$('#reset_ksqlrelations').on('click',function(){
+				console.log('reset form...');
+				$('#form_ksqlrelations')[0].reset();
+				$('#form_ksqlrelations')[0].submit();
+			});
+			
+			// SEARCH FORM
+			$('#search_ksqlrelations').on('click',function(){ $('#form_ksqlrelations')[0].submit(); });
+		});
+		 
+		// MAIN WHEN LOAD
+		$(window).load(function(){  
+			
+			// SHOW/HIDE DATATABLES COLUMN INIT 		
+			$('.dataTables_filter').append($('#dataTable-vis-toggle'));		
+			$('#dataTable-vis-toggle').removeClass('hide');
+			
+			// HIDE COLUMNS (DeESCRIPTION, DATAMODEL AND CREATEDAT)		
+			$.each([4],function(ind,value){ $("label.toggle-vis[data-column='"+ value +"']").trigger('click'); });
+			
+		});
+		
+		//]]>
+	</script>
+	
+	<!-- MAIN INIT -->
+	<script  th:inline="javascript">
+			
+	var currentLanguage = [[${lang}]];	
+
+	var ksqlFlowCreateJson = { 		
+		"close" : [[#{gen.closeBtn}]],		
+		"language" : currentLanguage,
+		"dupError" : [[#{domain.duplic.error}]]
+	};	
+
+	</script>
+</body>
+</html>

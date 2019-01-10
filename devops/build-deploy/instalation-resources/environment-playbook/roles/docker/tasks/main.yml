@@ -1,0 +1,35 @@
+---
+# Install Docker CE, later configure insecure registries
+      
+- name: Install Docker CE 17.12.1-ce package from a remote repo
+  yum:
+    name: https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-17.12.1.ce-1.el7.centos.x86_64.rpm
+    state: present
+    
+- name: Create docker directory
+  file: path="/etc/docker" state=directory
+      
+- name: Add insecure registry
+  copy: src=daemon.json dest=/etc/docker/daemon.json mode=0644
+
+- name: Change docker store path
+  template: src=docker.service dest=/lib/systemd/system/docker.service mode=0644
+  
+- name: just force systemd to reread configs and restart Docker service
+  systemd: 
+    state: restarted
+    daemon_reload: yes
+    name: docker
+
+- name: Download docker-compose 1.22.0 from GitHub
+  get_url:
+    url: https://github.com/docker/compose/releases/download/1.22.0/docker-compose-Linux-x86_64
+    dest: /bin
+
+- name: Rename docker-compose binary
+  command: mv /bin/docker-compose-Linux-x86_64 /bin/docker-compose
+
+- name: Set docker-compose permissions
+  file:
+    path: /bin/docker-compose
+    mode: 0755

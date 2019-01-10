@@ -1,0 +1,36 @@
+version: "2.1"
+
+services:
+  iotbrokerservice:
+    image: ${REPOSITORY}onesaitplatform/iotbroker:${MODULE_TAG}
+    container_name: iotbroker
+    environment:
+      - KAFKAENABLED="false"
+      - SERVER_NAME="localhost"
+      - REALTIMEDBUSEAUTH=false
+    stdin_open: true
+    networks:
+      - data_datanetwork
+    external_links:
+      - configdb
+      - schedulerdb
+      - routerservice
+      - elasticdb
+      - realtimedb
+  flowengineservice:
+    container_name: flowengine
+    image: ${REPOSITORY}onesaitplatform/flowengine:${MODULE_TAG}
+    environment:
+      - SERVERNAME="localhost"
+      - REALTIMEDBUSEAUTH=false
+    external_links:
+      - quasar
+      - configdb
+      - schedulerdb
+      - routerservice
+      - realtimedb
+    networks:
+      - data_datanetwork
+networks:
+  data_datanetwork:
+    external: true

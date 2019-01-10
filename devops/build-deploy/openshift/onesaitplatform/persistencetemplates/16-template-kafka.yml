@@ -1,0 +1,154 @@
+apiVersion: v1
+kind: Template
+metadata: 
+  name: kafka-template
+objects:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    generation: 1
+    labels:
+      app: kafka
+    name: kafka
+  spec:
+    replicas: ${REPLICAS}
+    selector:
+      app: kafka
+      deploymentconfig: kafka
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        labels:
+          app: kafka
+          deploymentconfig: kafka
+      spec:
+        containers:
+        - env:
+          - name: KAFKA_ADVERTISED_LISTENERS
+            value: SASL_PLAINTEXT://0.0.0.0:9095,PLAINTEXT://0.0.0.0:9092
+          - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+            value: "1"
+          - name: KAFKA_ZOOKEEPER_CONNECT
+            value: zookeeper:2181
+          - name: SERVER_NAME
+            value: kafka
+          - name: ZOOKEEPER_SERVER
+            value: zookeeper                        
+          image: docker-registry.default.svc:5000/${IMAGENAMESPACE}/kafka-secured:${PERSISTENCE_TAG}
+          imagePullPolicy: Always
+          name: kafka
+          ports:
+          - containerPort: 9093
+            protocol: TCP
+          - containerPort: 9095
+            protocol: TCP
+          - containerPort: 9999
+            protocol: TCP
+          - containerPort: 7778
+            protocol: TCP
+          - containerPort: 9092
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 2Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/kafka/secrets
+            name: kafka-volume-1
+          - mountPath: /var/lib/kafka/data
+            name: kafka-volume-2
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - emptyDir: {}
+          name: kafka-volume-1
+        - emptyDir: {}
+          name: kafka-volume-2
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - kafka
+        from:
+          kind: ImageStreamTag
+          name: kafka-secured:${PERSISTENCE_TAG}
+          namespace: ${IMAGENAMESPACE}
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    labels:
+      app: kafka
+    name: kafka
+  spec:
+    ports:
+    - name: 7778-tcp
+      port: 7778
+      protocol: TCP
+      targetPort: 7778
+    - name: 9092-tcp
+      port: 9092
+      protocol: TCP
+      targetPort: 9092
+    - name: 9093-tcp
+      port: 9093
+      protocol: TCP
+      targetPort: 9093
+    - name: 9095-tcp
+      port: 9095
+      protocol: TCP
+      targetPort: 9095
+    - name: 9999-tcp
+      port: 9999
+      protocol: TCP
+      targetPort: 9999
+    selector:
+      app: kafka
+      deploymentconfig: kafka
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+parameters:
+- name: PERSISTENCE_TAG 
+  description: Docker image tag 
+  required: true 
+- name: PROJECT 
+  description: Project name    
+  required: true    
+- name: IMAGENAMESPACE 
+  description: Image name space    
+  required: true 
+- name: REPLICAS 
+  description: Number of pods for this service   
+  required: false
+  value: "1"    

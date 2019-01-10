@@ -1,0 +1,138 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: flowengine-template
+objects:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp   
+    generation: 1
+    labels:
+      app: flowengineservice
+    name: flowengineservice
+  spec:
+    replicas: ${REPLICAS}
+    selector:
+      app: flowengineservice
+      deploymentconfig: flowengineservice
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp       
+        labels:
+          app: flowengineservice
+          deploymentconfig: flowengineservice
+      spec:
+        containers:
+        - env:
+          - name: SERVERNAME
+            value: ${SERVER_NAME}
+          - name: REALTIMEDBUSEAUTH
+            value: ${REALTIMEDBUSEAUTH}            
+          image: docker-registry.default.svc:5000/${IMAGENAMESPACE}/flowengine:${MODULE_TAG}
+          imagePullPolicy: Always
+          name: flowengineservice
+          ports:
+          - containerPort: 10000
+            protocol: TCP
+          - containerPort: 20100
+            protocol: TCP
+          - containerPort: 5050
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 3Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /tmp
+            name: flowengineservice-volume-1
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - emptyDir: {}
+          name: flowengineservice-volume-1
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - flowengineservice
+        from:
+          kind: ImageStreamTag
+          name: flowengine:${MODULE_TAG}
+          namespace: ${IMAGENAMESPACE}
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    labels:
+      app: flowengineservice
+    name: flowengineservice
+  spec:
+    ports:
+    - name: 5050-tcp
+      port: 5050
+      protocol: TCP
+      targetPort: 5050
+    - name: 10000-tcp
+      port: 10000
+      protocol: TCP
+      targetPort: 10000
+    - name: 20100-tcp
+      port: 20100
+      protocol: TCP
+      targetPort: 20100
+    selector:
+      app: flowengineservice
+      deploymentconfig: flowengineservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}  
+parameters:    
+- name: MODULE_TAG 
+  description: Docker image tag     
+  required: true 
+- name: PROJECT 
+  description: Project name    
+  required: true 
+- name: IMAGENAMESPACE 
+  description: Image name space    
+  required: true   
+- name: SERVER_NAME 
+  description: Load Balancer dns name    
+  required: true  
+- name: REALTIMEDBUSEAUTH
+  description: Enable MongoDb authentication    
+  required: false          
+- name: REPLICAS 
+  description: Number of pods for this service   
+  required: false
+  value: "1"        

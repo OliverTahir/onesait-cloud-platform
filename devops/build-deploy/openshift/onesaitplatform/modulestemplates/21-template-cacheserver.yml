@@ -1,0 +1,132 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: cacheservice-template
+objects:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp    
+    generation: 1
+    labels:
+      app: cacheservice
+    name: cacheservice
+  spec:
+    replicas: ${REPLICAS}
+    selector:
+      app: cacheservice
+      deploymentconfig: cacheservice
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        labels:
+          app: cacheservice
+          deploymentconfig: cacheservice
+      spec:
+        containers:
+        - env:
+          - name: SERVER_NAME
+            value: ${SERVER_NAME}
+          - name: REALTIMEDBUSEAUTH
+            value: ${REALTIMEDBUSEAUTH}            
+          image: docker-registry.default.svc:5000/${IMAGENAMESPACE}/cacheservice:${MODULE_TAG}
+          imagePullPolicy: Always
+          name: cacheservice
+          ports:
+          - containerPort: 20001
+            protocol: TCP
+          - containerPort: 5701
+            protocol: TCP  
+          resources:
+            limits:
+              cpu: 500m
+              memory: 3Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /tmp
+            name: cacheservice-volume-1
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - emptyDir: {}
+          name: cacheservice-volume-1
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - cacheservice
+        from:
+          kind: ImageStreamTag
+          name: cacheservice:${MODULE_TAG}
+          namespace: ${IMAGENAMESPACE}
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    labels:
+      app: cacheservice
+    name: cacheservice
+  spec:
+    ports:
+    - name: 20001-tcp
+      port: 20001
+      protocol: TCP
+      targetPort: 20001
+    - name: 5701-tcp
+      port: 5701
+      protocol: TCP
+      targetPort: 5701  
+    selector:
+      app: cacheservice
+      deploymentconfig: cacheservice
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}   
+parameters:    
+- name: MODULE_TAG 
+  description: Docker image tag     
+  required: true 
+- name: PROJECT 
+  description: Project name    
+  required: true
+- name: IMAGENAMESPACE 
+  description: Image name space    
+  required: true     
+- name: SERVER_NAME 
+  description: Load Balancer dns name    
+  required: true 
+- name: REALTIMEDBUSEAUTH
+  description: Enable MongoDb authentication    
+  required: false           
+- name: REPLICAS 
+  description: Number of pods for this service   
+  required: false
+  value: "1"     
