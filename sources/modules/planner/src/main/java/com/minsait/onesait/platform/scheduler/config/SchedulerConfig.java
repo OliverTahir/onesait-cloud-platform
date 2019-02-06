@@ -24,7 +24,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = SCHEDULER_PREFIX)
+@ConfigurationProperties(prefix = SCHEDULER_PREFIX )
 @ConditionalOnResource(resources = SCHEDULER_PROPERTIES_LOCATION)
 public class SchedulerConfig {
 		

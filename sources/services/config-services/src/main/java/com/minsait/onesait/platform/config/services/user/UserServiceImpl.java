@@ -18,11 +18,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.minsait.onesait.platform.config.model.ClientPlatform;
 import com.minsait.onesait.platform.config.model.Role;
+import com.minsait.onesait.platform.config.model.Role.Type;
 import com.minsait.onesait.platform.config.model.Token;
 import com.minsait.onesait.platform.config.model.User;
 import com.minsait.onesait.platform.config.model.UserToken;
@@ -349,4 +352,13 @@ public class UserServiceImpl implements UserService {
 
 	}
 
+	@Override
+	public List<User> getAllActiveUsersWithoutRoles(Type... roles) {
+		/*String concatenateRoles = StringUtils.join(roles, ",");
+		return userRepository.getAllActiveUsersWithoutRoles();*/
+		
+		// TODO:
+		
+		return null;
+	}
 }

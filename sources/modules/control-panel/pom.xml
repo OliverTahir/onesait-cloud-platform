@@ -186,7 +186,8 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
+			<optional>true</optional>
+		    <scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -243,7 +244,12 @@
 			<artifactId>smtp</artifactId>
 			<version>1.6.1</version>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>com.minsait.onesait.platform</groupId>
+			<artifactId>onesaitplatform-report</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 
 

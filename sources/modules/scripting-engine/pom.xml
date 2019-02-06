@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.minsait.onesait.platform</groupId>
 		<artifactId>onesaitplatform-parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0</version>
 		<relativePath>../..</relativePath>
 	</parent>
 	<groupId>com.minsait.onesait.platform</groupId>
@@ -20,11 +20,11 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.minsait.onesait.platform</groupId>
 			<artifactId>onesaitplatform-persistence-ri</artifactId>
 			<version>${onesaitplatform.version}</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>com.minsait.onesait.platform</groupId>
 			<artifactId>onesaitplatform-config-model</artifactId>

@@ -15,6 +15,7 @@ spring: ## General Config
       properties.hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
       # Hibernate ddl auto (create, create-drop, validate, update)
       hibernate.ddl-auto: validate 
+      show-sql: true
 
 ## LOGGING CONF
 logging:

@@ -21,10 +21,14 @@
  ******************************************************************************/
 package com.minsait.onesait.platform.controlpanel.controller.dashboard.dto;
 
+import java.io.Serializable;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-public class UserDTO {
+public class UserDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

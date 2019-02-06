@@ -260,6 +260,14 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/datasources/list"
+				},
+				{
+					"title": {
+						"EN": "My Reports",
+						"ES": "Mis Informes"
+					},
+					"icon": "",
+					"url": "/controlpanel/reports/list"
 				}
 			]
 		},

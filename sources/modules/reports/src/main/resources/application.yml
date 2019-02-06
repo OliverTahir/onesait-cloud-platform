@@ -1,0 +1,21 @@
+security.ignored: /**
+
+management.security.enabled: false
+
+## WEBSERVER CONFIG
+server:
+   port: 8080
+   contextPath: /reports
+spring:
+  application.name: onesaitplatform-reports
+  thymeleaf.cache: false
+                
+## LOGGING CONF
+logging:
+   path: ./target/ 
+   file: ${spring.application.name}
+   level:
+      com.minsait: DEBUG 
+      org.springframework.boot: INFO
+#      org.springframework.boot.autoconfigure: DEBUG
+

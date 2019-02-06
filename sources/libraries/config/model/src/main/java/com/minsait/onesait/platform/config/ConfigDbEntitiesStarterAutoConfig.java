@@ -32,6 +32,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.minsait.onesait.platform.config.model.auditor.ReportAuditorAwareImpl;
 import com.minsait.onesait.platform.config.repository.OntologyRepository;
 
 @Configuration
@@ -88,4 +89,9 @@ public class ConfigDbEntitiesStarterAutoConfig {
         tm.setEntityManagerFactory(entityManagerFactory().getObject());
         return tm;
     }
+	
+	@Bean
+	public ReportAuditorAwareImpl reportAuditorAware() {
+		return new ReportAuditorAwareImpl();
+	}
 }

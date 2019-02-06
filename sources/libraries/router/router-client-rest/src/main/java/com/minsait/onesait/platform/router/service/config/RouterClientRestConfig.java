@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.client.RestTemplate;
 
@@ -124,6 +125,16 @@ public class RouterClientRestConfig {
 	@Bean
 	public RestTemplate restTemplate() {
 		return new RestTemplate(requestFactory());
+	}
+	
+	@Bean
+	public RestTemplate basicAuthorizationRestTemplate() {
+		RestTemplate restTemplate = new RestTemplate(requestFactory());
+		
+		// TODO: pasar a properties ("admin", "admin") 
+		restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor("admin", "admin"));
+		
+		return restTemplate;
 	}
 	
 	@Bean

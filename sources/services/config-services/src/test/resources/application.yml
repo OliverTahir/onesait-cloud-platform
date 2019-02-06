@@ -1,0 +1,19 @@
+#logging.level.org.hibernate.SQL: debug
+spring: ## General Config  
+   datasource: ## JPA Config
+      url: jdbc:mysql://localhost:3306/onesaitplatform_config?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+      username: root
+      password: changeIt!
+      tomcat.max-wait: 10000
+      tomcat.max-active: 50
+      tomcat.test-on-borrow: true
+   jpa:
+      hibernate.ddl-auto: validate 
+      show-sql: true
+
+## LOGGING CONF
+logging:
+   level:
+      org.springframework: INFO
+      com.indra: DEBUG
+      org.hibernate: INFO

@@ -67,22 +67,39 @@ public class RouterSuscriptionServiceImpl
 
 	@Override
 	public OperationResultModel execute(SuscriptionModel model) {
+		
+		// TODO: Inject basic Auth RestTemplate
 		final RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory());
 		restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor("admin", "admin"));
 
-		final String operation = model.getOperationType().name();
-
+		/*final String operation = model.getOperationType().name();
+		
 		OperationResultModel quote = new OperationResultModel();
-
+		
 		if (operation.equalsIgnoreCase("SUSCRIBE")
 				|| operation.equalsIgnoreCase(SuscriptionModel.OperationType.SUSCRIBE.name())) {
 			quote = restTemplate.postForObject(routerStandaloneURL + "/suscribe", model, OperationResultModel.class);
 		} else if (operation.equalsIgnoreCase("UNSUSCRIBE")
 				|| operation.equalsIgnoreCase(SuscriptionModel.OperationType.UNSUSCRIBE.name())) {
 			quote = restTemplate.postForObject(routerStandaloneURL + "/unsuscribe", model, OperationResultModel.class);
-		}
+		}*/
 
+		OperationResultModel quote;
+		
+		switch (model.getOperationType()) {
+			case SUSCRIBE:
+				quote = restTemplate.postForObject(routerStandaloneURL + "/suscribe", model, OperationResultModel.class);
+				break;
+			case UNSUSCRIBE:
+				quote = restTemplate.postForObject(routerStandaloneURL + "/unsuscribe", model, OperationResultModel.class);
+				break;
+			default:
+				quote = new OperationResultModel();
+				break;
+		}
+		
 		log.info(quote.toString());
+		
 		return quote;
 	}
 
@@ -95,5 +112,4 @@ public class RouterSuscriptionServiceImpl
 	public OperationResultModel unSuscribe(SuscriptionModel model) throws Exception {
 		return execute(model);
 	}
-
 }

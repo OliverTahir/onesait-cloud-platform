@@ -18,6 +18,7 @@ import java.util.List;
 
 import com.minsait.onesait.platform.config.model.ClientPlatform;
 import com.minsait.onesait.platform.config.model.Role;
+import com.minsait.onesait.platform.config.model.Role.Type;
 import com.minsait.onesait.platform.config.model.Token;
 import com.minsait.onesait.platform.config.model.User;
 import com.minsait.onesait.platform.config.model.UserToken;
@@ -82,5 +83,7 @@ public interface UserService {
 	User saveExistingUser(User user);
 
 	List<User> getAllActiveUsers();
+
+	List<User> getAllActiveUsersWithoutRoles(Type... role);
 
 }
