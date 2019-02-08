@@ -14,6 +14,7 @@
  */
 package com.minsait.onesait.platform.controlpanel.controller.reports;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -26,9 +27,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.minsait.onesait.platform.config.model.Report;
 import com.minsait.onesait.platform.config.model.Role;
@@ -38,12 +41,13 @@ import com.minsait.onesait.platform.config.services.reports.ReportService;
 import com.minsait.onesait.platform.config.services.user.UserService;
 import com.minsait.onesait.platform.controlpanel.controller.reports.dto.ReportDto;
 import com.minsait.onesait.platform.controlpanel.converter.report.ReportConverter;
+import com.minsait.onesait.platform.controlpanel.converter.report.ReportDtoConverter;
 
 import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequestMapping("/reports")
 @Controller
-@Slf4j
 public class ReportController {
 
 	@Autowired
@@ -54,6 +58,10 @@ public class ReportController {
 
 	@Autowired
 	private ReportConverter reportConverter;
+	
+	@Autowired
+	private ReportDtoConverter reportDtoConverter;
+	
 	
 	//@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@ModelAttribute
@@ -94,7 +102,7 @@ public class ReportController {
 	}
 	
 	@GetMapping(value = "/create", produces = MediaType.TEXT_HTML_VALUE)
-	public String create(Model model) {
+	public ModelAndView create(Model model) {
 		
 		log.debug("INI. Report create");
 		
@@ -102,9 +110,19 @@ public class ReportController {
 				.isPublic(Boolean.FALSE)
 				.build();
 		
-		model.addAttribute("report", report);
+		return new ModelAndView("reports/create", "report", report);
+	}
+	
+	@GetMapping(value = "/edit/{id}", produces = MediaType.TEXT_HTML_VALUE)
+	public ModelAndView edit(@PathVariable("id") Long id) {
 		
-		return "reports/create";
+		log.debug("INI. Report edit");
+		
+		Report entity = reportService.findById(id);
+
+		ReportDto report = reportDtoConverter.convert(entity);
+		
+		return new ModelAndView("reports/create", "report", report);
 	}
 	
 	@PostMapping(value = "/save", produces = MediaType.TEXT_HTML_VALUE)
@@ -119,23 +137,29 @@ public class ReportController {
 		return "redirect:/reports/list";
 	}
 	
-	@PutMapping(value = "/update", produces = MediaType.TEXT_HTML_VALUE)
+	// TODO: Revisar si utilizar un adapter
+	@PostMapping(value = "/update", produces = MediaType.TEXT_HTML_VALUE)
 	public String update(@Valid @ModelAttribute("report") ReportDto report) {
 		
-		log.debug("INI. Report save");
+		log.debug("INI. Report update");
 		
-		Report entity = reportConverter.convert(report);
+		Report entity = reportService.findById(report.getId());
+		
+		entity.setName(report.getName());
+		entity.setDescription(report.getDescription());
+		entity.setIsPublic(report.getIsPublic());
+		
+		if (!report.getFile().isEmpty()) {
+			log.debug("Actualizamos la plantilla del informe ", report);
+			try {
+				entity.setFile(report.getFile().getBytes());
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
 		
 		reportService.saveOrUpdate(entity);
 		
 		return "redirect:/reports/list";
-	}
-	
-	@GetMapping(value = "/edit", produces = MediaType.TEXT_HTML_VALUE)
-	public String edit() {
-		
-		log.debug("INI. Report edit");
-		
-		return "reports/create";
 	}
 }

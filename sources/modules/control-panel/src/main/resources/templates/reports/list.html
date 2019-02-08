@@ -124,18 +124,19 @@
 									<div class="col-md-12">											
 										<div id="contenedor-tabla-outside" class="contiene margin-bottom-30">																						
 											<div>
-												
 												<!-- DATATABLE initCompleteCallback -->
 												<div dt:conf="reports">
-													<div dt:confType="callback" dt:type="init" dt:function="Report.List.initCompleteCallback" />
+												  	<div dt:confType="callback" dt:type="init" dt:function="Report.List.initCompleteCallback" />
 												</div><!-- // DATATABLE initCompleteCallback -->
-											
 												
-												<a id="reload">Click me to refresh the table!</a>
-											
+												<!--  <div>
+													<a id="reload">Click me to refresh the table!</a>
+												</div>-->
+													
 												<!-- DATATABLE DANDELION CONF. -->												
 												<table id="reports" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers" dt:url="@{/reports/list/data}"
-													dt:reloadSelector="#reload" dt:reloadFunction="Report.List.reloadReportTable">
+													dt:reloadSelector="#reload" dt:reloadFunction="Report.List.reloadReportTable"
+													dt:filterSelector="#filterButton" dt:filterClearSelector="#filterClearButton" > <!-- dt:dom="l0frtip" -->
 													<thead>
 														<tr class="cabecera-tabla">
 															<th dt:visible="false" dt:property="id" class="titulo-columnas hide" th:text="#{gen.identification}">Identification</th>
@@ -169,6 +170,8 @@
 	
 	<!-- PLUGINS -->
 	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
+<!-- 	<script th:src="{/static/vendor/datatable/dataTables.js}"/> -->
+	<script th:src="@{/static/vendor/datatable/dataTables.buttons.js}"/>
 	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>	
 	<script th:src="@{/static/vendor/jquery/jquery.autocomplete.js}"/>
 	<script th:src="@{/static/vendor/jquery-format-datetime/jquery.formatDateTime.js}"/>
@@ -187,15 +190,52 @@
 	
 	// DATATABLES LANGUAJE FROM PROPERTIES.
 	datatable_lang = [[#{datatables_lang}]];	
-	var languageJson = JSON.parse(datatable_lang);
+	
+	// PROVISIONAL => ELIMINARRRRRRRRRRR
+	datatable_lang = '{\"decimal\": \"\", \"emptyTable\": \"No Entries\", \"info\": \"Showing _START_ to _END_ of _TOTAL_ Entries\", \"infoEmpty\": \"0 Entries \", \"infoFiltered\": \"(Filtered from _MAX_ total Entries)\",\"infoPostFix\":\"\",\"thousands\":\",\",\"lengthMenu\":\" _MENU_ \",\"loadingRecords\": \" \",\"processing\": \" \",\"search\":\"Search:\",\"zeroRecords\":\"No matching records found\",\"paginate\": {\"first\":\"First\",\"last\":\"Last\",\"next\":\"&gt;\",\"previous\": \"&lt;\"}}';	
+	////////////////////////////////////////////////
+	
+	/*var languageJson = JSON.parse(datatable_lang);
 	if ( languageJson ) { 
 		$.extend( true, $.fn.dataTable.defaults, { language: languageJson }); 
-	}
+	}*/
 	
 	</script>
 	
 	<script th:src="@{/static/js/pages/reports/util.js}" th:inline="javascript"></script>
 	<script th:src="@{/static/js/pages/reports/list.js}" th:inline="javascript"></script>
 
+	<script type="text/javascript" th:inline="javascript">	
+		
+	// dtSettings = undefined
+	
+		
+	
+		$(document).ready(function() {
+			var oTable = $('.datatable');
+
+			//oTable.destroy();
+						
+			$('.datatable').DataTable( {
+		        dom: 'Bfrtip',
+		        buttons: [
+		            {
+		                extend: 'alert',
+		                text: 'My button 1'
+		            },
+		            {
+		                extend: 'alert',
+		                text: 'My button 2'
+		            },
+		            {
+		                extend: 'alert',
+		                text: 'My button 3'
+		            }
+		        ]
+		    } );
+		});
+		
+	</script>
+	
 </body>
 </html> 

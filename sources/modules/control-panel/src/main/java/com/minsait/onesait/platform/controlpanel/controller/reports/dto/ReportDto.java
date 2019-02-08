@@ -10,11 +10,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ReportDto implements Serializable {
 
 	private static final long serialVersionUID = 8529188708539218088L;

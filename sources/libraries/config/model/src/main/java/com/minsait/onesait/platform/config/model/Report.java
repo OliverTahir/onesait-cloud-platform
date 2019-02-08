@@ -22,10 +22,13 @@ import com.minsait.onesait.platform.config.model.base.AbstractReportAuditableEnt
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
+@Getter @Setter
+@ToString
 @Entity
 @Table(name = "REPORT")
-@Getter @Setter
+
 @NamedEntityGraphs(
 		@NamedEntityGraph(name = "findByIdFetchFile", attributeNodes = { @NamedAttributeNode("file") })
 )

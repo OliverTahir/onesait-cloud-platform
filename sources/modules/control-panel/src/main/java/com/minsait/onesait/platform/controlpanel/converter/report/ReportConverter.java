@@ -12,6 +12,9 @@ import com.minsait.onesait.platform.controlpanel.controller.reports.dto.ReportDt
 import com.minsait.onesait.platform.controlpanel.converter.reports.BaseConverter;
 import com.minsait.onesait.platform.controlpanel.utils.AppWebUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class ReportConverter implements BaseConverter<ReportDto, Report> {
 
@@ -21,6 +24,8 @@ public class ReportConverter implements BaseConverter<ReportDto, Report> {
 	// TODO: create
 	@Override
 	public Report convert(ReportDto report) {
+		log.debug("INI. Convert entity Report: {}  -->  ReportDto");
+		
 		Report entity = new Report();
 		
 		// Form
@@ -28,10 +33,13 @@ public class ReportConverter implements BaseConverter<ReportDto, Report> {
 		entity.setDescription(report.getDescription());
 		entity.setIsPublic(report.getIsPublic());
 		
-		try {
-			entity.setFile(report.getFile().getBytes());
-		} catch (IOException e) {
-			throw new RuntimeException("ERROR AL SUBIR EL FICHERO !!!!!!!");
+		if (!report.getFile().isEmpty()) {
+			log.debug("Actualizamos la plantilla del informe ", report);
+			try {
+				entity.setFile(report.getFile().getBytes());
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
 		}
 		
 		// Inner

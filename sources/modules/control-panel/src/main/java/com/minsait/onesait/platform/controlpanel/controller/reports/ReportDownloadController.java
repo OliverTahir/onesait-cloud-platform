@@ -12,6 +12,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,7 +34,22 @@ public class ReportDownloadController {
 	@Autowired
 	private ReportBuilderService reportBuilderService;
 	
-	@GetMapping(value = "/download/report/{id}")
+	/**
+	 * Cache-Control:private
+	 * Connection:keep-alive
+	 * Content-Disposition:attachment; filename=Report0.pdf
+	 * Content-Length:149851
+	 * Content-Type:application/pdf
+	 * Date:Wed, 10 Jun 2015 04:17:49 GMT
+	 * Server:nginx
+	 * Set-Cookie:fileDownload=true; path=/
+
+	 * @param response
+	 * @param id
+	 * @throws IOException
+	 * @throws JRException
+	 */
+	@GetMapping(value = "/download/report/{id}", produces = { MediaType.APPLICATION_PDF_VALUE })
     public void download(HttpServletResponse response, @PathVariable("id") Long id) throws IOException, JRException {
 		
 		Report entity = reportService.findById(id);
@@ -41,14 +57,12 @@ public class ReportDownloadController {
 		byte[] bytes = entity.getFile();
 		
 		// -- PROVISIONAL => ELIMINARRRRRRR
-//		File file = new File("D:\\work\\onesait-cloud-platform\\sources\\modules\\control-panel\\src\\main\\resources\\report\\test.jrxml");
-//		InputStream is = new FileInputStream(file);
+		File file = new File("D:\\work\\onesait-cloud-platform\\sources\\modules\\control-panel\\src\\main\\resources\\report\\test.jrxml");
+		InputStream is = new FileInputStream(file);
 		
-		//Resource resource = new ClassPathResource("report/test.jasper");
-		//bytes = IOUtils.toByteArray(resource.getInputStream());
 		// --------------------------------------
 		
-		ReportDataDto reportData = reportBuilderService.generateReport(bytes, entity.getName(), ReportTypeEnum.PDF);
+		ReportDataDto reportData = reportBuilderService.generateReport(is, entity.getName(), ReportTypeEnum.PDF);
 		
 		if (reportData.getContent() != null) {
 			// Hace falta una cookie para que el plugin ajax funcione correctamente y retire la animación de loading...

@@ -1,4 +1,5 @@
 Report.List = (function() {
+	"use-strict";
 	
 	var init = function() {
 		
@@ -7,6 +8,9 @@ Report.List = (function() {
 			e.preventDefault(); 
 			window.location = '/controlpanel/reports/create';
 		})
+		
+		
+		$('#reports_processing').hide();
 	};
 	
 	var dtRenderActionColumn = function (data, type, row) {
@@ -21,6 +25,35 @@ Report.List = (function() {
 	function initCompleteCallback(settings, json) {
 		
 		initTableEvents();
+		
+		
+		var oTable = $('.datatable').dataTable();
+		
+		$('.datatable').DataTable( {
+	        dom: 'Bfrtip',
+	        buttons: [
+	            {
+	                extend: 'alert',
+	                text: 'My button 1'
+	            },
+	            {
+	                extend: 'alert',
+	                text: 'My button 2'
+	            },
+	            {
+	                extend: 'alert',
+	                text: 'My button 3'
+	            }
+	        ]
+	    } );
+		
+		oTable.button().add( 0, {
+			dom: 'Bfrtip',
+		    action: function ( e, dt, button, config ) {
+		        dt.ajax.reload();
+		    },
+		    text: 'Reload table'
+		} );
 	}
 	
 	function reloadReportTable() {
@@ -43,10 +76,6 @@ Report.List = (function() {
 			$(this).on('click', function (e) {
 				e.preventDefault(); 
 				var id = $(this).data('id');
-				
-				//alert('Debe generar el informe y descargarlo : ' + id);
-				
-				
 				$.fileDownload('/controlpanel/download/report/'+ id, {
 		    		httpMethod: 'GET',
 		    		successCallback: function(url) {
@@ -61,7 +90,7 @@ Report.List = (function() {
 		
 		$('.icon-report-trash').each(function() {
 			$(this).on('click', function (e) {
-				//e.preventDefault(); 
+				e.preventDefault(); 
 				var id = $(this).data('id'); 
 				deleteReportDialog(id);
 			});
@@ -79,7 +108,7 @@ Report.List = (function() {
 			$(this).on('click', function (e) {
 				e.preventDefault(); 
 				var id = $(this).data('id');
-				alert('PTE de validar que se puede editar. Probablemente solo el nombre del fichero : ' + id);
+				window.location = '/controlpanel/reports/edit/' + id;
 			});
 		});
 	}
@@ -120,7 +149,6 @@ Report.List = (function() {
 		});
 	}
 	
-	
 	// Public API
 	return {
 		init: init,
@@ -132,8 +160,52 @@ Report.List = (function() {
 })();
 
 $(document).ready(function() {	
-		
+	
 	Report.List.init();
 	
+	/*$.fn.dataTable.ext.buttons.alert = {
+	    className: 'buttons-alert',
+	 
+	    action: function ( e, dt, node, config ) {
+	        alert( this.text() );
+	    }
+	};
 	
+	
+	$('.datatable').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            {
+                extend: 'alert',
+                text: 'My button 1'
+            },
+            {
+                extend: 'alert',
+                text: 'My button 2'
+            },
+            {
+                extend: 'alert',
+                text: 'My button 3'
+            }
+        ]
+    } );*/
+	
+	
+	
+	
+	
+	
+	
+	/*$('.datatable').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            {
+                text: 'Reload',
+                action: function ( e, dt, node, config ) {
+                    alert( 'Reload' );
+                    reloadReportTable()
+                }
+            }
+        ]
+    });*/
 });

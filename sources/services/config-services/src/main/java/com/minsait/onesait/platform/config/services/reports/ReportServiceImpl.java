@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 import com.minsait.onesait.platform.config.model.Report;
 import com.minsait.onesait.platform.config.repository.report.ReportRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class ReportServiceImpl implements ReportService {
 
