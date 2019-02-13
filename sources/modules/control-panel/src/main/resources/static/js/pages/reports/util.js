@@ -74,11 +74,41 @@ var Util = (function() {
 			});
 		}*/
 
+	var blockUI = function (el, centerY) {
+		var el = $(el);
+		el.block({
+			message: '<img src="'+ajaxLoading+'" alt="">',
+			centerY: centerY != undefined ? centerY : true,
+			css: {
+				top: '10%',
+				border: 'none',
+				padding: '2px',
+				backgroundColor: 'none'
+			},
+			overlayCSS: {
+				backgroundColor: '#000',
+				opacity: 0.05,
+				cursor: 'wait'
+			}
+		});
+	}
+
+	// Wrapper function to unblock elements (finish loading)
+	var unblockUI = function (el) {
+		$(el).unblock({
+			onUnblock: function () {
+				$(el).removeAttr("style");
+			}
+		});
+	}
+	
 	// Public API
 	return {
 		formatDateTime: formatDateTime,
 		dtRenderCenterColumn: dtRenderCenterColumn,
 		dtRenderPublicColumn: dtRenderPublicColumn,
-		dtRenderDateCenterColumn: dtRenderDateCenterColumn
+		dtRenderDateCenterColumn: dtRenderDateCenterColumn,
+		blockUI: blockUI,
+		unblockUI: unblockUI
 	};
 })();

@@ -13,7 +13,7 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
-@Builder
+//@Builder
 @ToString
 public class FieldDto extends BaseFieldDto implements Serializable {
 
@@ -21,6 +21,7 @@ public class FieldDto extends BaseFieldDto implements Serializable {
 
 	public static class Builder {
 		private String name;
+		private String description;
 		private String value;
 		private Class<?> type;
 
@@ -29,6 +30,11 @@ public class FieldDto extends BaseFieldDto implements Serializable {
 			return this;
 		}
 
+		public Builder description(String description) {
+			this.description = description;
+			return this;
+		}
+		
 		public Builder value(String value) {
 			this.value = value;
 			return this;
@@ -42,6 +48,7 @@ public class FieldDto extends BaseFieldDto implements Serializable {
 		public FieldDto build() {
 			FieldDto fieldDto = new FieldDto();
 			fieldDto.name = name;
+			fieldDto.description = description;
 			fieldDto.value = value;
 			fieldDto.type = type;
 			return fieldDto;

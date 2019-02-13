@@ -1,5 +1,7 @@
 package com.minsait.onesait.platform.controlpanel.controller.reports;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,16 +11,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.minsait.onesait.platform.config.model.Report;
 import com.minsait.onesait.platform.config.services.reports.ReportService;
 import com.minsait.onesait.platform.controlpanel.controller.reports.dto.ReportDto;
 import com.minsait.onesait.platform.controlpanel.converter.report.ReportDtoConverter;
 import com.minsait.onesait.platform.controlpanel.utils.AppWebUtils;
+import com.minsait.onesait.platform.reports.dto.ReportInfoDto;
+import com.minsait.onesait.platform.reports.service.ReportInfoService;
 
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.engine.JRException;
 
 @Slf4j
 @RequestMapping("/reports")
@@ -27,6 +35,9 @@ public class RestReportController {
 
 	@Autowired
 	private ReportService reportService;
+	
+	@Autowired
+	private ReportInfoService reportInfoService;
 	
 	@Autowired
 	private ReportDtoConverter reportDtoConverter;
@@ -49,6 +60,15 @@ public class RestReportController {
 		}
 		
 		return reportDtoConverter.convert(reports);
+	}
+	
+	@PostMapping(value = "/info", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ReportInfoDto> reportInfo(@RequestParam("file") MultipartFile multipartFile) throws IOException, JRException {
+		InputStream is = multipartFile.getInputStream();
+		
+		ReportInfoDto reportInfoDto = reportInfoService.extract(is);
+		
+		return new ResponseEntity<ReportInfoDto>(reportInfoDto, HttpStatus.OK);
 	}
 	
 	@DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

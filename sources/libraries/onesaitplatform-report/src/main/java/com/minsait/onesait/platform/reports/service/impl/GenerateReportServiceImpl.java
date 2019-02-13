@@ -9,7 +9,7 @@ import java.util.HashMap;
 import org.springframework.stereotype.Service;
 
 import com.minsait.onesait.platform.reports.dto.ReportDataDto;
-import com.minsait.onesait.platform.reports.service.ReportBuilderService;
+import com.minsait.onesait.platform.reports.service.GenerateReportService;
 import com.minsait.onesait.platform.reports.type.ReportTypeEnum;
 
 import net.sf.jasperreports.engine.JREmptyDataSource;
@@ -19,13 +19,9 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.export.JRPdfExporter;
-import net.sf.jasperreports.export.SimpleExporterInput;
-import net.sf.jasperreports.export.SimpleExporterInputItem;
-import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 
 @Service
-public class ReportBuilderServiceImpl implements ReportBuilderService {
+public class GenerateReportServiceImpl implements GenerateReportService {
 
 	// TODO: Analizar Visor de Informes --> JasperDesignViewer.viewReportDesign(is, isXML);
 	
@@ -33,27 +29,27 @@ public class ReportBuilderServiceImpl implements ReportBuilderService {
 	//			JasperDesign design = JRXmlLoader.load(new ByteArrayInputStream(new byte[] {}));
 	
 	@Override
-	public ReportDataDto generateReport(byte[] bytes, String name, ReportTypeEnum type) throws JRException, IOException {
+	public ReportDataDto generate(byte[] bytes, String name, ReportTypeEnum type) throws JRException, IOException {
 		
 		InputStream is = new ByteArrayInputStream(bytes);
 		
-		return generateReport(is, name, type);
+		return generate(is, name, type);
 	}
 		
 	@Override
-	public ReportDataDto generateReport(InputStream is, String name, ReportTypeEnum type) throws JRException, IOException {
+	public ReportDataDto generate(InputStream is, String name, ReportTypeEnum type) throws JRException, IOException {
 		try {
 			JasperReport jasperReport = JasperCompileManager.compileReport(is);
 			
 			//JasperReport jasperReport = (JasperReport) JRLoader.loadObject(is);
-			return generateReport(jasperReport, name, type);
+			return generate(jasperReport, name, type);
 		} finally {
 			is.close();
 		}
 	}
 	
 	@Override
-	public ReportDataDto generateReport(JasperReport jasperReport, String name, ReportTypeEnum type) throws JRException {
+	public ReportDataDto generate(JasperReport jasperReport, String name, ReportTypeEnum type) throws JRException {
 		
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		

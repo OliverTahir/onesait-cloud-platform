@@ -104,7 +104,7 @@ public class ReportController {
 	@GetMapping(value = "/create", produces = MediaType.TEXT_HTML_VALUE)
 	public ModelAndView create(Model model) {
 		
-		log.debug("INI. Report create");
+		log.debug("INI. REdirect Report create. Create empty ReportDto");
 		
 		ReportDto report = ReportDto.builder()
 				.isPublic(Boolean.FALSE)
@@ -116,7 +116,7 @@ public class ReportController {
 	@GetMapping(value = "/edit/{id}", produces = MediaType.TEXT_HTML_VALUE)
 	public ModelAndView edit(@PathVariable("id") Long id) {
 		
-		log.debug("INI. Report edit");
+		log.debug("INI. Redirect to Report edit. Find report id: {}", id);
 		
 		Report entity = reportService.findById(id);
 
@@ -136,8 +136,7 @@ public class ReportController {
 		
 		return "redirect:/reports/list";
 	}
-	
-	// TODO: Revisar si utilizar un adapter
+		
 	@PostMapping(value = "/update", produces = MediaType.TEXT_HTML_VALUE)
 	public String update(@Valid @ModelAttribute("report") ReportDto report) {
 		
@@ -145,6 +144,7 @@ public class ReportController {
 		
 		Report entity = reportService.findById(report.getId());
 		
+		// TODO: Encapsular
 		entity.setName(report.getName());
 		entity.setDescription(report.getDescription());
 		entity.setIsPublic(report.getIsPublic());
@@ -157,6 +157,7 @@ public class ReportController {
 				throw new RuntimeException(e);
 			}
 		}
+		// ////////////////////////////////////////
 		
 		reportService.saveOrUpdate(entity);
 		

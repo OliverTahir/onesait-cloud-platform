@@ -21,6 +21,7 @@ public class ParamterDto extends BaseFieldDto implements Serializable {
 
 	public static class Builder {
 		private String name;
+		private String description;
 		private String value;
 		private Class<?> type;
 
@@ -29,6 +30,11 @@ public class ParamterDto extends BaseFieldDto implements Serializable {
 			return this;
 		}
 
+		public Builder description(String description) {
+			this.description = description;
+			return this;
+		}
+		
 		public Builder value(String value) {
 			this.value = value;
 			return this;
@@ -42,6 +48,7 @@ public class ParamterDto extends BaseFieldDto implements Serializable {
 		public ParamterDto build() {
 			ParamterDto paramterDto = new ParamterDto();
 			paramterDto.name = name;
+			paramterDto.description = description;
 			paramterDto.value = value;
 			paramterDto.type = type;
 			return paramterDto;

@@ -7,10 +7,7 @@ Report.List = (function() {
 		$('#btn-report-create').on('click', function (e) {
 			e.preventDefault(); 
 			window.location = '/controlpanel/reports/create';
-		})
-		
-		
-		$('#reports_processing').hide();
+		})		
 	};
 	
 	var dtRenderActionColumn = function (data, type, row) {
@@ -25,20 +22,26 @@ Report.List = (function() {
 	function initCompleteCallback(settings, json) {
 		
 		initTableEvents();
+		
+		//customizeDatatable();
+		$('#reports_processing').remove();
 	}
+	
+	/*function customizeDatatable() {
+		
+	}*/
 	
 	function reloadReportTable() {
 		var oTable = $('.datatable').dataTable();
 		reloadDataTable(oTable);
 	}
 	
-	function reloadDataTable(oTable) {
-		//var oTable = $('.datatable').dataTable();
+	function reloadDataTable(oTable) {		
 		oTable.fnClearTable();
+		
 		oTable.DataTable().ajax.reload(function() {
 			Report.List.initCompleteCallback()
 		}, true);
-		
 	}
 	
 	function initTableEvents() {
@@ -71,7 +74,19 @@ Report.List = (function() {
 			$(this).on('click', function (e) {
 				e.preventDefault(); 
 				var id = $(this).data('id');
-				alert('Debe descargar el informe original (jrxml o jasper) : ' + id);
+				$(this).on('click', function (e) {
+					e.preventDefault(); 
+					var id = $(this).data('id');
+					$.fileDownload('/controlpanel/download/report-design/'+ id, {
+			    		httpMethod: 'GET',
+			    		successCallback: function(url) {
+			    			//$('#loadingDialog').dialog('close');
+			    		},
+			    		failCallback: function(responseHtml, url) {
+			    			alert('Ha ocurrido un error');
+			    		}
+			    	});
+				});
 			});
 		});
 		
@@ -160,11 +175,6 @@ $(document).ready(function() {
             }
         ]
     } );*/
-	
-	
-	
-	
-	
 	
 	
 	/*$('.datatable').DataTable( {

@@ -132,7 +132,7 @@
 
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label th:text="#{gen.description} + ':'">Description</label>
+															<label th:text="#{gen.description}">Description</label>
 															<div class="form-group">
 																<input id="description" type="text" name="description" maxlength="100" th:field="*{description}" class="form-control " th:placeholder="#{gen.description}"/>
 															</div>
@@ -141,7 +141,7 @@
 
 													<div class="col-md-2 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="" th:text="#{dashboards.public} + ':'">Public</label>
+															<label class="" th:text="#{dashboards.public}">Public</label>
 															<div class="mt-checkbox-list"> 
 																<label class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body"  th:attr="data-content=#{dashboards.public.help},data-title=#{dashboards.public}"><i class="la la-lightbulb-o font-md"></i> <div class="inline font-xs" th:text="#{dashboards.public} +'?'">Public?</div>
 																	<input  id="checkboxPublic" class="form-control no-remove"  name="checkboxPublic" type="checkbox" th:field="*{isPublic}"   />
@@ -154,16 +154,113 @@
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label>File</label><span class="required"> (*)</span>
-															<input id="file" class="btn btn-default" type="file" th:field="*{file}" style="width:100%"/>
+<!-- 															<input id="file" class="btn btn-default" type="file" th:field="*{file}" style="width:100%"/> -->
+											 	<button id="btn-report-upload" type="button" class="btn btn-outline btn-circle blue" onclick="$('#buttonLoadFile').click();" value="Select"> <i class="fa fa-file-archive-o" style="padding-right:4px;" disabled="disabled"></i><span th:text="#{binaryfiles.select}"></span></button>
+										      	<input id="btn-report-upload-file" class="form-group button_text hide" type="file" accept="*" name="file"  />
+										  	
+														
 														</div>
 													</div>
 												</div>
 											
+											<div id="report-settings" > <!--  style="visibility: hidden;"  -->
+												<div class="row">
+													<div class="col-md-12">
+														<div class="tabbable-line">									
+															<ul class="nav nav-tabs pull-left">
+																<li id="tab-parameters" class="active">
+																	<a href="#tab_1" data-toggle="tab" aria-expanded="false">
+																		<span class="caption-subject">Parameters</span>
+																	</a>
+																</li>
+																<li id="tab-datasource">
+																	<a href="#tab_2" data-toggle="tab" aria-expanded="true" > 
+																		<span class="caption-subject">Datasource</span>
+																	</a>
+																</li>
+																<li id="tab-images">
+																	<a href="#tab_3" data-toggle="tab" aria-expanded="true" > 
+																		<span class="caption-subject">Images</span>
+																	</a>
+																</li>
+															</ul>
+														</div>
+													</div>
+												</div>
+												
+												<div class="row">
+													<div class="tab-content">
+														<div class="tab-pane active" id="tab_1">	
+															<!-- Info
+															<div class="col-md-6 col-sm-3 col-xs-6">
+																<div class="panel panel-info">
+																	<!- - <div class="panel-heading"><i class="la la-info-circle"></i></div> - ->
+																	<div class="panel-body">
+																		<i class="la la-info-circle"></i>  Se deben introducir los parametros, bla bla bla
+																	</div>
+																</div>
+															</div>
+															-->
+															
+										
+															<div class="col-md-12 col-sm-6 col-xs-12">
+<!-- 																<div class="form-group"> -->
+<!-- 																	<label>Title</label><span class="required"> (*)</span> -->
+<!-- 																	<input id="title" type="text" name="title" th:required="true" maxlength="100" class="form-control " placeholder="Title"/> -->
+														
+<!-- 																</div> -->
+																
+<div class="table-responsive ">	
+<table id="table-report-parameters" class="table">
+  	<thead>
+	    <tr>
+	      	<th scope="col">Nombre</th>
+	      	<th scope="col">Valor</th>
+	      	<th scope="col">Description</th>
+	    </tr>
+  	</thead>
+  	<tbody>
+		
+  	</tbody>
+</table>
+</div>
+															</div>
+
+															
+															
+															
+														</div>
+																
+														<div class="tab-pane " id="tab_2">
+															<!-- <div class="row" th:include="project/fragments/users-tab" id="users-tab-fragment"></div> -->
+															<div class="col-md-12 col-sm-6 col-xs-12">
+																<div class="panel panel-info">
+																	<!-- <div class="panel-heading"><i class="la la-info-circle"></i></div> -->
+																	<div class="panel-body">
+																		Esta función no esta habilitada. El data source debe ser implicito al report
+																	</div>
+																</div>
+															</div>
+														</div>
+														
+														<div class="tab-pane" id="tab_3">
+															<div class="col-md-12 col-sm-6 col-xs-12">
+																<div class="panel panel-info">
+																	<!-- <div class="panel-heading"><i class="la la-info-circle"></i></div> -->
+																	<div class="panel-body">
+																		Pendiente de implementar (si es necesario)
+																	</div>
+																</div>
+															</div>
+														</div>	
+													</div>
+												</div>
+											</div>
+																						
 												<!-- FORM BUTTONS -->
 												<div class="form-actions">
+													<!-- CANCEL  -->
 													<div class="pull-left">
-													
-													<!-- CANCEL  -->													
 														<button	id="btn-report-cancel" name="btn-report-cancel" type="button" class="btn btn-circle btn-outline blue no-border" th:value="#{gen.cancelBtn}" value="cancel">
 															<i class="la la-arrow-left"></i><span th:text="#{gen.cancelBtn}"> Cancel </span>
 														</button>
@@ -213,6 +310,23 @@
 
 	<!-- FOOTER INCLUDE -->
 	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>
+			
+		
+	<!-- Modal error -->
+	<div id="modal-error" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"></button>
+					<h4 class="modal-title" id="response" th:text="#{binaryfiles.maxsize.error}"></h4>
+				</div>											      
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{binaryfiles.close}">Close</button>
+				</div>
+			</div>
+		</div>
+	</div><!-- // Modal error -->
 		
 	<!-- PLUGINS -->
 	<script	th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}" />

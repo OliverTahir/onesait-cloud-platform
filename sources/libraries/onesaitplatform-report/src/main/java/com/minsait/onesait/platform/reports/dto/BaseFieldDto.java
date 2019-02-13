@@ -17,6 +17,8 @@ public abstract class BaseFieldDto implements Serializable {
 
 	protected String name;
 	
+	protected String description;
+	
 	protected String value;
 	
 	protected Class<?> type;

@@ -12,6 +12,7 @@ public class FieldDtoConverter extends AbstractBaseConverter<JRField, FieldDto> 
 	public FieldDto convert(JRField field) {
 		return new FieldDto.Builder()
 				.name(field.getName())
+				.description(field.getDescription())
 				.type(field.getValueClass())
 				.build();
 	}

@@ -24,13 +24,13 @@ import net.sf.jasperreports.engine.JRException;
 public class ReportBuilderServiceTest {
 
 	@Autowired
-	ReportBuilderService service;
+	GenerateReportService service;
 	
 	@Test
 	public void test() throws JRException, IOException {
 		Resource resource = new ClassPathResource("report/test.jasper");
 		
-		ReportDataDto reportData = service.generateReport(resource.getInputStream(), "test", ReportTypeEnum.PDF);
+		ReportDataDto reportData = service.generate(resource.getInputStream(), "test", ReportTypeEnum.PDF);
 		
 		System.out.println(reportData);
 	}

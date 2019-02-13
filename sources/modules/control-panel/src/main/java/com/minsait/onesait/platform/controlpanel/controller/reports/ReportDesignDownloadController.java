@@ -1,17 +1,11 @@
 package com.minsait.onesait.platform.controlpanel.controller.reports;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,25 +13,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.minsait.onesait.platform.config.model.Report;
 import com.minsait.onesait.platform.config.services.reports.ReportService;
-import com.minsait.onesait.platform.reports.dto.ReportDataDto;
-import com.minsait.onesait.platform.reports.service.GenerateReportService;
-import com.minsait.onesait.platform.reports.type.ReportTypeEnum;
 
 import net.sf.jasperreports.engine.JRException;
 
 @Controller
-public class ReportDownloadController {
+public class ReportDesignDownloadController {
 	
 	@Autowired
 	private ReportService reportService;
 	
-	@Autowired
-	private GenerateReportService reportBuilderService;
-	
 	/**
 	 * Cache-Control:private
 	 * Connection:keep-alive
-	 * Content-Disposition:attachment; filename=Report0.pdf
+	 * Content-Disposition:attachment; filename=Report0.jrxml
 	 * Content-Length:149851
 	 * Content-Type:application/pdf
 	 * Date:Wed, 10 Jun 2015 04:17:49 GMT
@@ -49,22 +37,14 @@ public class ReportDownloadController {
 	 * @throws IOException
 	 * @throws JRException
 	 */
-	@GetMapping(value = "/download/report/{id}", produces = { MediaType.APPLICATION_PDF_VALUE })
+	@GetMapping(value = "/download/report-design/{id}", produces = { MediaType.APPLICATION_PDF_VALUE })
     public void download(HttpServletResponse response, @PathVariable("id") Long id) throws IOException, JRException {
 		
 		Report entity = reportService.findById(id);
 		
 		byte[] bytes = entity.getFile();
-		
-		// -- PROVISIONAL => ELIMINARRRRRRR
-		File file = new File("D:\\work\\onesait-cloud-platform\\sources\\modules\\control-panel\\src\\main\\resources\\report\\test.jrxml");
-		InputStream is = new FileInputStream(file);
-		
-		// --------------------------------------
-		
-		ReportDataDto reportData = reportBuilderService.generate(is, entity.getName(), ReportTypeEnum.PDF);
-		
-		if (reportData.getContent() != null) {
+
+		if (bytes != null) {
 			// Hace falta una cookie para que el plugin ajax funcione correctamente y retire la animación de loading...
 			Cookie cookie = new Cookie("fileDownload", "true");
 			cookie.setPath("/");
@@ -72,9 +52,9 @@ public class ReportDownloadController {
 				
 			//Preparar response
 			response.setHeader("Cache-Control", "max-age=60, must-revalidate");
-			response.setHeader("Content-disposition", "attachment; filename=" + reportData.getFullName());
-			response.setContentType("application/pdf");
-			response.setContentLength(reportData.getContent().length);
+			response.setHeader("Content-disposition", "attachment; filename=" + entity.getName() + ".jrxml");
+			response.setContentType("application/jrxml");
+			response.setContentLength(bytes.length);
 						
 			//Enviar fichero al navegador
 			response.getOutputStream().write(bytes);
