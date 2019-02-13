@@ -25,35 +25,6 @@ Report.List = (function() {
 	function initCompleteCallback(settings, json) {
 		
 		initTableEvents();
-		
-		
-		var oTable = $('.datatable').dataTable();
-		
-		$('.datatable').DataTable( {
-	        dom: 'Bfrtip',
-	        buttons: [
-	            {
-	                extend: 'alert',
-	                text: 'My button 1'
-	            },
-	            {
-	                extend: 'alert',
-	                text: 'My button 2'
-	            },
-	            {
-	                extend: 'alert',
-	                text: 'My button 3'
-	            }
-	        ]
-	    } );
-		
-		oTable.button().add( 0, {
-			dom: 'Bfrtip',
-		    action: function ( e, dt, button, config ) {
-		        dt.ajax.reload();
-		    },
-		    text: 'Reload table'
-		} );
 	}
 	
 	function reloadReportTable() {

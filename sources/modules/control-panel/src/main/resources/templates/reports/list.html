@@ -100,7 +100,6 @@
 													<div sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')" class="col-md-4 col-xs-12">
 														<div class="form-group">															
 															<div class="input-group">
-															
 																<select style="width: 180%; " id="search-list-reports-owner" class="selectpicker form-control" data-size="50" data-live-search="true" data-width="100%">
 																	<option value="" text="Select owner" > Select owner...</option>
 																	<option th:each="owner :${owners}" th:value="${owner}" th:text="${owner}" ></option>
@@ -123,19 +122,31 @@
 									<!-- REPORT LIST -->
 									<div class="col-md-12">											
 										<div id="contenedor-tabla-outside" class="contiene margin-bottom-30">																						
+											
+											
+												
 											<div>
-												<!-- DATATABLE initCompleteCallback -->
+											
+											
+												<!-- Reload button -->
+												<div class="row">
+													<div class="pull-right margin-right-20">
+														<button type="button" id="btn-report-reload" name="btn-report-reload" value="Reload" 
+															class="btn btn-sm btn-circle btn-outline btn-primary blue" title="Reload"><i class="la la-refresh"></i>&nbsp;</button>	
+													</div>
+												</div><!-- // Reload button -->
+											
+											
+												<!-- DATATABLE initCompleteCallback (DT function) -->
 												<div dt:conf="reports">
 												  	<div dt:confType="callback" dt:type="init" dt:function="Report.List.initCompleteCallback" />
-												</div><!-- // DATATABLE initCompleteCallback -->
+												</div><!-- // DATATABLE initCompleteCallback (DT function) -->
 												
-												<!--  <div>
-													<a id="reload">Click me to refresh the table!</a>
-												</div>-->
+												
 													
 												<!-- DATATABLE DANDELION CONF. -->												
 												<table id="reports" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers" dt:url="@{/reports/list/data}"
-													dt:reloadSelector="#reload" dt:reloadFunction="Report.List.reloadReportTable"
+													dt:reloadSelector="#btn-report-reload" dt:reloadFunction="Report.List.reloadReportTable"
 													dt:filterSelector="#filterButton" dt:filterClearSelector="#filterClearButton" > <!-- dt:dom="l0frtip" -->
 													<thead>
 														<tr class="cabecera-tabla">
