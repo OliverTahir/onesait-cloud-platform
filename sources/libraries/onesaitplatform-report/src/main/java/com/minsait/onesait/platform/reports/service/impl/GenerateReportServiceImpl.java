@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 import org.springframework.stereotype.Service;
 
-import com.minsait.onesait.platform.reports.dto.ReportDataDto;
+import com.minsait.onesait.platform.reports.model.ReportDto;
 import com.minsait.onesait.platform.reports.service.GenerateReportService;
 import com.minsait.onesait.platform.reports.type.ReportTypeEnum;
 
@@ -29,7 +29,7 @@ public class GenerateReportServiceImpl implements GenerateReportService {
 	//			JasperDesign design = JRXmlLoader.load(new ByteArrayInputStream(new byte[] {}));
 	
 	@Override
-	public ReportDataDto generate(byte[] bytes, String name, ReportTypeEnum type) throws JRException, IOException {
+	public ReportDto generate(byte[] bytes, String name, ReportTypeEnum type) throws JRException, IOException {
 		
 		InputStream is = new ByteArrayInputStream(bytes);
 		
@@ -37,11 +37,11 @@ public class GenerateReportServiceImpl implements GenerateReportService {
 	}
 		
 	@Override
-	public ReportDataDto generate(InputStream is, String name, ReportTypeEnum type) throws JRException, IOException {
+	public ReportDto generate(InputStream is, String name, ReportTypeEnum type) throws JRException, IOException {
 		try {
 			JasperReport jasperReport = JasperCompileManager.compileReport(is);
 			
-			//JasperReport jasperReport = (JasperReport) JRLoader.loadObject(is);
+			//jasperReport = (JasperReport) JRLoader.loadObject(is);
 			return generate(jasperReport, name, type);
 		} finally {
 			is.close();
@@ -49,7 +49,7 @@ public class GenerateReportServiceImpl implements GenerateReportService {
 	}
 	
 	@Override
-	public ReportDataDto generate(JasperReport jasperReport, String name, ReportTypeEnum type) throws JRException {
+	public ReportDto generate(JasperReport jasperReport, String name, ReportTypeEnum type) throws JRException {
 		
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		
@@ -68,7 +68,7 @@ public class GenerateReportServiceImpl implements GenerateReportService {
 		
 		/////////////////////////////
 		
-		return ReportDataDto.builder() //
+		return ReportDto.builder() //
 				.name(name) //
 				.extension(type.extension()) //
 				.contentType(type.contentType()) //

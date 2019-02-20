@@ -22,7 +22,8 @@ import com.minsait.onesait.platform.config.services.reports.ReportService;
 import com.minsait.onesait.platform.controlpanel.controller.reports.dto.ReportDto;
 import com.minsait.onesait.platform.controlpanel.converter.report.ReportDtoConverter;
 import com.minsait.onesait.platform.controlpanel.utils.AppWebUtils;
-import com.minsait.onesait.platform.reports.dto.ReportInfoDto;
+import com.minsait.onesait.platform.reports.exception.ReportInfoException;
+import com.minsait.onesait.platform.reports.model.ReportInfoDto;
 import com.minsait.onesait.platform.reports.service.ReportInfoService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,7 @@ import net.sf.jasperreports.engine.JRException;
 @RestController
 public class RestReportController {
 
+	// -- Service -- //
 	@Autowired
 	private ReportService reportService;
 	
@@ -40,30 +42,37 @@ public class RestReportController {
 	private ReportInfoService reportInfoService;
 	
 	@Autowired
-	private ReportDtoConverter reportDtoConverter;
+	private AppWebUtils utils;
 	
+	// -- Converter -- //
 	@Autowired
-	AppWebUtils utils;
+	private ReportDtoConverter reportDtoConverter;
 	
 	@GetMapping(value = "/list/data", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<ReportDto> list() {
 		log.debug("INI. Retrieve data");
 		
-		List<Report> reports = null;
-		
-		if (utils.isAdministrator()) {
-			log.debug("User admin: {} => Retrieve all reports", utils.getUserId());
-			reports = reportService.findAllActiveReports();
-		} else {
-			log.debug("User NOT admin: {} => Retrieve yours reports", utils.getUserId());
-			reports = reportService.findAllActiveReportsByUserId(utils.getUserId());
-		}
+		List<Report> reports = utils.isAdministrator() ? reportService.findAllActiveReports() : 
+				reportService.findAllActiveReportsByUserId(utils.getUserId());
 		
 		return reportDtoConverter.convert(reports);
 	}
 	
+	/**
+	 * <p>
+	 * 
+	 * see {link ReportExceptionTranslatorAspect}
+	 * see {link ReportInfoExceptionAdvisor}
+	 * 
+	 * 
+	 * @param multipartFile
+	 * @return
+	 * @throws IOException
+	 * @throws JRException
+	 */
 	@PostMapping(value = "/info", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ReportInfoDto> reportInfo(@RequestParam("file") MultipartFile multipartFile) throws IOException, JRException {
+		
 		InputStream is = multipartFile.getInputStream();
 		
 		ReportInfoDto reportInfoDto = reportInfoService.extract(is);

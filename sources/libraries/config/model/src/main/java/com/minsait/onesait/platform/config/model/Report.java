@@ -1,6 +1,9 @@
 package com.minsait.onesait.platform.config.model;
 
+import java.util.List;
+
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -28,9 +32,13 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "REPORT")
-
 @NamedEntityGraphs(
-		@NamedEntityGraph(name = "findByIdFetchFile", attributeNodes = { @NamedAttributeNode("file") })
+		@NamedEntityGraph(name = "findByIdFetchFileAndParams", 
+			attributeNodes = { 
+					@NamedAttributeNode("file"),
+					@NamedAttributeNode("parameters")
+			}
+		)
 )
 public class Report extends AbstractReportAuditableEntity {
 	
@@ -71,4 +79,9 @@ public class Report extends AbstractReportAuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
+	
+	// -- Unidireccional OneToMany -- //
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "report_id")
+	private List<ReportParameter> parameters;
 }

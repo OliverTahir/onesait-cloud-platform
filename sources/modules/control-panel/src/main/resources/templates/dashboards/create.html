@@ -301,7 +301,7 @@
 														th:value="#{gen.resetBtn}">
 														 <span th:text="#{gen.resetBtn}"> Reset</span>
 													</button>
-													<!-- RESET authorizations-->
+													<!-- RESET authorizations-->	
 													<button id="resetBtn" type="button" th:if="${dashboard.id} != null" 
 														class="btn btn-circle btn-outline blue" name="reset"
 														th:onclick="'DashboardsCreateController.go(\'' + @{/dashboards/dashboardconf/} + ${dashboard.id} + '\');'"

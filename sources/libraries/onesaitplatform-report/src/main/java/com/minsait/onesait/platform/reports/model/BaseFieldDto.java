@@ -1,4 +1,4 @@
-package com.minsait.onesait.platform.reports.dto;
+package com.minsait.onesait.platform.reports.model;
 
 import java.io.Serializable;
 
@@ -11,7 +11,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString
-public abstract class BaseFieldDto implements Serializable {
+public abstract class BaseFieldDto<T> implements Serializable {
 
 	private static final long serialVersionUID = -7180474757055816942L;
 
@@ -19,7 +19,7 @@ public abstract class BaseFieldDto implements Serializable {
 	
 	protected String description;
 	
-	protected String value;
+	protected T value;
 	
-	protected Class<?> type;
+	protected Class<T> type;
 }

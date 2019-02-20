@@ -11,7 +11,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.minsait.onesait.platform.reports.dto.ReportDataDto;
+import com.minsait.onesait.platform.reports.model.ReportDto;
 import com.minsait.onesait.platform.reports.type.ReportTypeEnum;
 
 import net.sf.jasperreports.engine.JRException;
@@ -30,7 +30,7 @@ public class ReportBuilderServiceTest {
 	public void test() throws JRException, IOException {
 		Resource resource = new ClassPathResource("report/test.jasper");
 		
-		ReportDataDto reportData = service.generate(resource.getInputStream(), "test", ReportTypeEnum.PDF);
+		ReportDto reportData = service.generate(resource.getInputStream(), "test", ReportTypeEnum.PDF);
 		
 		System.out.println(reportData);
 	}

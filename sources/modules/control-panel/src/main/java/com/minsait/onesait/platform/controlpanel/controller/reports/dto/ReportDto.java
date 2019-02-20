@@ -2,13 +2,15 @@ package com.minsait.onesait.platform.controlpanel.controller.reports.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
+
+import com.minsait.onesait.platform.reports.model.ParameterDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -35,4 +37,6 @@ public class ReportDto implements Serializable {
 	private Boolean isPublic;
 		
 	private MultipartFile file;
+	
+	private List<ParameterDto<?>> parameters;
 }

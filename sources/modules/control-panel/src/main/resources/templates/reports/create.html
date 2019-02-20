@@ -108,19 +108,18 @@
 									
 									<div class="col-md-12">
 										
-										
 										<!-- FORM ACTIONS FOR INSERT / UPDATE -->
-											<input th:if="${report.id} == null" type="hidden" id="report-save-action" name="action" th:value="@{/reports/save}" />
-											<input th:if="${report.id} != null" type="hidden" id="report-save-action" name="action" th:value="@{/reports/update}" /> 
+										<input th:if="${report.id} == null" type="hidden" id="report-save-action" name="action" th:value="@{/reports/save}" />
+										<input th:if="${report.id} != null" type="hidden" id="report-save-action" name="action" th:value="@{/reports/update}" /> 
 											
-											<input th:if="${report.id} == null" type="hidden" id="report-save-method" name="_method" th:value="post" />
-											<input th:if="${report.id} != null" type="hidden" id="report-save-method" name="_method" value="put" />
-											<!-- //FORM ACTIONS FOR INSERT / UPDATE -->
+										<input th:if="${report.id} == null" type="hidden" id="report-save-method" name="_method" th:value="post" />
+										<input th:if="${report.id} != null" type="hidden" id="report-save-method" name="_method" value="put" />
+										<!-- //FORM ACTIONS FOR INSERT / UPDATE -->
 											
 										<form role="form" id="form-report" th:object="${report}" method="post" class="form" enctype="multipart/form-data">
 											
 											<input th:if="${report.id} != null" type="hidden" id="report-save-id" name="id" th:field="*{id}" />
-											
+																						
 											<div class="form-body">												
 												<div class="row">
 													<div class="col-md-3 col-sm-6 col-xs-12">
@@ -144,7 +143,7 @@
 															<label class="" th:text="#{dashboards.public}">Public</label>
 															<div class="mt-checkbox-list"> 
 																<label class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body"  th:attr="data-content=#{dashboards.public.help},data-title=#{dashboards.public}"><i class="la la-lightbulb-o font-md"></i> <div class="inline font-xs" th:text="#{dashboards.public} +'?'">Public?</div>
-																	<input  id="checkboxPublic" class="form-control no-remove"  name="checkboxPublic" type="checkbox" th:field="*{isPublic}"   />
+																	<input id="checkboxPublic" class="form-control no-remove"  name="checkboxPublic" type="checkbox" th:field="*{isPublic}"   />
 																	<span></span>
 																</label>
 															</div>
@@ -154,108 +153,17 @@
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label>File</label><span class="required"> (*)</span>
-<!-- 															<input id="file" class="btn btn-default" type="file" th:field="*{file}" style="width:100%"/> -->
-											 	<button id="btn-report-upload" type="button" class="btn btn-outline btn-circle blue" onclick="$('#buttonLoadFile').click();" value="Select"> <i class="fa fa-file-archive-o" style="padding-right:4px;" disabled="disabled"></i><span th:text="#{binaryfiles.select}"></span></button>
-										      	<input id="btn-report-upload-file" class="form-group button_text hide" type="file" accept="*" name="file"  />
-										  	
-														
-														</div>
-													</div>
-												</div>
-											
-											<div id="report-settings" > <!--  style="visibility: hidden;"  -->
-												<div class="row">
-													<div class="col-md-12">
-														<div class="tabbable-line">									
-															<ul class="nav nav-tabs pull-left">
-																<li id="tab-parameters" class="active">
-																	<a href="#tab_1" data-toggle="tab" aria-expanded="false">
-																		<span class="caption-subject">Parameters</span>
-																	</a>
-																</li>
-																<li id="tab-datasource">
-																	<a href="#tab_2" data-toggle="tab" aria-expanded="true" > 
-																		<span class="caption-subject">Datasource</span>
-																	</a>
-																</li>
-																<li id="tab-images">
-																	<a href="#tab_3" data-toggle="tab" aria-expanded="true" > 
-																		<span class="caption-subject">Images</span>
-																	</a>
-																</li>
-															</ul>
+															<!-- <input id="file" class="btn btn-default" type="file" th:field="*{file}" style="width:100%"/> -->
+											 				<button id="btn-report-upload" type="button" class="btn btn-outline btn-circle blue" value="Select"> <i class="fa fa-file-archive-o" style="padding-right:4px;" disabled="disabled"></i><span th:text="#{binaryfiles.select}"></span></button>
+										      				<input id="btn-report-upload-file" class="form-group button_text hide" type="file" accept="*" name="file"  />
 														</div>
 													</div>
 												</div>
 												
-												<div class="row">
-													<div class="tab-content">
-														<div class="tab-pane active" id="tab_1">	
-															<!-- Info
-															<div class="col-md-6 col-sm-3 col-xs-6">
-																<div class="panel panel-info">
-																	<!- - <div class="panel-heading"><i class="la la-info-circle"></i></div> - ->
-																	<div class="panel-body">
-																		<i class="la la-info-circle"></i>  Se deben introducir los parametros, bla bla bla
-																	</div>
-																</div>
-															</div>
-															-->
-															
-										
-															<div class="col-md-12 col-sm-6 col-xs-12">
-<!-- 																<div class="form-group"> -->
-<!-- 																	<label>Title</label><span class="required"> (*)</span> -->
-<!-- 																	<input id="title" type="text" name="title" th:required="true" maxlength="100" class="form-control " placeholder="Title"/> -->
-														
-<!-- 																</div> -->
-																
-<div class="table-responsive ">	
-<table id="table-report-parameters" class="table">
-  	<thead>
-	    <tr>
-	      	<th scope="col">Nombre</th>
-	      	<th scope="col">Valor</th>
-	      	<th scope="col">Description</th>
-	    </tr>
-  	</thead>
-  	<tbody>
-		
-  	</tbody>
-</table>
-</div>
-															</div>
-
-															
-															
-															
-														</div>
-																
-														<div class="tab-pane " id="tab_2">
-															<!-- <div class="row" th:include="project/fragments/users-tab" id="users-tab-fragment"></div> -->
-															<div class="col-md-12 col-sm-6 col-xs-12">
-																<div class="panel panel-info">
-																	<!-- <div class="panel-heading"><i class="la la-info-circle"></i></div> -->
-																	<div class="panel-body">
-																		Esta función no esta habilitada. El data source debe ser implicito al report
-																	</div>
-																</div>
-															</div>
-														</div>
-														
-														<div class="tab-pane" id="tab_3">
-															<div class="col-md-12 col-sm-6 col-xs-12">
-																<div class="panel panel-info">
-																	<!-- <div class="panel-heading"><i class="la la-info-circle"></i></div> -->
-																	<div class="panel-body">
-																		Pendiente de implementar (si es necesario)
-																	</div>
-																</div>
-															</div>
-														</div>	
-													</div>
-												</div>
-											</div>
+												<!-- TABS REPORTS -->
+												<div th:if="${report.id} == null" th:include="fragments/report-create :: #reportCreateFragment"></div>
+												<div th:if="${report.id} != null" th:include="fragments/report-edit :: #reportEditFragment"></div>
+												<!-- // TABS REPORTS -->
 																						
 												<!-- FORM BUTTONS -->
 												<div class="form-actions">
@@ -276,14 +184,14 @@
 														<span class="sep no-border"></span>
 	
 														<!-- RESET create -->
-														<button id="btn-report-reset" type="button" th:if="${report.id} == null" class="btn btn-circle btn-outline blue" name="reset" th:value="#{gen.resetBtn}">
+														<button id="btn-report-reset" type="reset" th:if="${report.id} == null" class="btn btn-circle btn-outline blue" name="reset" th:value="#{gen.resetBtn}">
 															 <span th:text="#{gen.resetBtn}"> Reset </span>
 														</button>
 														
 														<span class="sep" ></span>
 														
 														<!-- CREATE / UPDATE-->
-														<button id="btn-report-save" name="btn-report-save" type="button" class="btn btn-circle btn-outline btn-primary">
+														<button id="btn-report-save" name="btn-report-save" type="submit" class="btn btn-circle btn-outline btn-primary">
 															<span th:if="${report.id} == null" th:text="#{gen.createBtn}"> New </span>
 															<span th:unless="${report.id} == null" th:text="#{gen.editBtn}"> Edit </span>
 														</button>
@@ -295,18 +203,12 @@
 									</div>
 								</div>
 							</div>
-						</div>
-						<!-- END PORTLET BASIC  -->
-					</div>
-					<!-- END COL-12 -->
-				</div>
-				<!-- END MAIN ROW -->
-			</div>
-			<!-- END CONTENT BODY -->
-		</div>
-		<!-- END CONTENT page-content-wrapper -->
-	</div>
-	<!-- END MAIN PAGE WRAPPER -->
+						</div><!-- END PORTLET BASIC  -->
+					</div><!-- END COL-12 -->
+				</div><!-- END MAIN ROW -->
+			</div><!-- END CONTENT BODY -->
+		</div><!-- END CONTENT page-content-wrapper -->
+	</div><!-- END MAIN PAGE WRAPPER -->
 
 	<!-- FOOTER INCLUDE -->
 	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>
@@ -345,10 +247,17 @@
 	<!-- TEMPLATE CONTROLLER -->
 	<script th:src="@{/static/js/pages/reports/create.js}" />
 	
-	
 	<!-- CORE JS CONTROLLERS -->
 	<script th:src="@{/static/js/app.js}"/>
 	<script th:src="@{/static/js/layout.js}"/>	
+	
+	<script th:inline="javascript">
+	//<![CDATA[
+		
+		var currentLanguage = [[${lang}]];
+		
+	//]]>
+	</script>
 	
 </body>
 </html>

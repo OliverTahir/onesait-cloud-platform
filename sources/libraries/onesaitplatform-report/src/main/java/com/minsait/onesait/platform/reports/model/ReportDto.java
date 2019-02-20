@@ -1,4 +1,4 @@
-package com.minsait.onesait.platform.reports.dto;
+package com.minsait.onesait.platform.reports.model;
 
 import java.io.Serializable;
 
@@ -9,7 +9,7 @@ import lombok.ToString;
 @Data
 @Builder
 @ToString
-public class ReportDataDto implements Serializable {
+public class ReportDto implements Serializable {
 
 	private static final long serialVersionUID = -1806266282549826766L;
 

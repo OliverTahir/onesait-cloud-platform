@@ -9,8 +9,8 @@ import com.minsait.onesait.platform.config.model.Report;
 import com.minsait.onesait.platform.config.model.ReportType;
 import com.minsait.onesait.platform.config.model.User;
 import com.minsait.onesait.platform.controlpanel.controller.reports.dto.ReportDto;
-import com.minsait.onesait.platform.controlpanel.converter.reports.BaseConverter;
 import com.minsait.onesait.platform.controlpanel.utils.AppWebUtils;
+import com.minsait.onesait.platform.reports.converter.BaseConverter;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,6 +20,9 @@ public class ReportConverter implements BaseConverter<ReportDto, Report> {
 
 	@Autowired
 	private AppWebUtils appWebUtils;
+	
+	@Autowired
+	private ReportParamenterConverter paramenterConverter;
 	
 	// TODO: create
 	@Override
@@ -42,6 +45,9 @@ public class ReportConverter implements BaseConverter<ReportDto, Report> {
 			}
 		}
 		
+		// Params
+		entity.setParameters(paramenterConverter.convert(report.getParameters()));
+		
 		// Inner
 		entity.setActive(Boolean.TRUE);
 		entity.setUser(findUser());
@@ -56,6 +62,7 @@ public class ReportConverter implements BaseConverter<ReportDto, Report> {
 		return user;
 	}
 	
+	// TODO: Pte buscr por code (MUY IMP)
 	private ReportType findReportType() {
 		ReportType reportType = new ReportType();
 		reportType.setId(3L);

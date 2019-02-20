@@ -23,64 +23,41 @@ public class ReportServiceImpl implements ReportService {
 	@Transactional(value = TxType.SUPPORTS)
 	@Override
 	public List<Report> findAllActiveReports() {
-		
+		log.debug("INI. Find active reports (Admin user)");
 		return reportRepository.findAllActive();
 	}
 	
 	@Transactional(value = TxType.SUPPORTS)
 	@Override
 	public List<Report> findAllActiveReportsByUserId(String userId) {
-		
+		log.debug("INI. Find active reports by userId: {}", userId);
 		return reportRepository.findAllActiveByUserId(userId);
 	}
 
 	@Transactional(value = TxType.SUPPORTS)
 	@Override
 	public Report findById(Long id) {
-		
+		log.debug("INI. Find report by Id: {}", id);
 		return reportRepository.findById(id);
 	}
 	
 	@Transactional(value = TxType.REQUIRED)
 	@Override
 	public void saveOrUpdate(Report report) {
-		
+		log.debug("INI. Save report: {}", report);
 		reportRepository.save(report);
 	}
 
 	@Transactional(value = TxType.REQUIRED)
 	@Override
 	public void disable(Long id) {
-		
+		log.debug("INI. Disable report id: {}", id);
 		Report entity = reportRepository.findOne(id);
 		
 		if (entity != null) {
+			log.debug("Disable > Find report {}", entity);
 			entity.setActive(Boolean.FALSE);
 			reportRepository.save(entity);
 		}
 	}
 }
-
-
-
-
-//return findAllActiveReportsByUserId("developer");
-
-
-/*List<Report> reports = new ArrayList<>();
-for (int i = 1; i < 101; i++) {
-	User user = new User();
-	user.setUserId(userId);
-	
-	Report report = Report.builder()
-			.id(Long.valueOf(i))
-			.name(i == 1 ? "infbase" : "Informe " + i )
-			.description("Description " + i )
-			.user(user)
-			.created(new Date())
-			.isPublic(i%2 == 0 ? true : false)
-			.build();
-	reports.add(report);
-}
-
-return reports;*/

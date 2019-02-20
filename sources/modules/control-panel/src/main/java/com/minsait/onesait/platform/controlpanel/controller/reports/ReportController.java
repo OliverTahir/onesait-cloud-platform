@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -95,7 +94,6 @@ public class ReportController {
 	
 	@GetMapping(value = "/list", produces = MediaType.TEXT_HTML_VALUE)
 	public String list() {
-		
 		log.debug("INI. Report list.");
 		
 		return "reports/list";
@@ -127,7 +125,6 @@ public class ReportController {
 	
 	@PostMapping(value = "/save", produces = MediaType.TEXT_HTML_VALUE)
 	public String save(@Valid @ModelAttribute("report") ReportDto report) {
-		
 		log.debug("INI. Report save");
 		
 		Report entity = reportConverter.convert(report);
@@ -158,6 +155,8 @@ public class ReportController {
 			}
 		}
 		// ////////////////////////////////////////
+		
+		
 		
 		reportService.saveOrUpdate(entity);
 		

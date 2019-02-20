@@ -1,4 +1,4 @@
-package com.minsait.onesait.platform.reports.dto;
+package com.minsait.onesait.platform.reports.model;
 
 import java.io.Serializable;
 import java.util.List;
@@ -14,7 +14,9 @@ public class ReportInfoDto implements Serializable {
 
 	private static final long serialVersionUID = -6785564223596371607L;
 	
-	private List<ParamterDto> parameters;
+	private List<ParameterDto<?>> parameters;
 	
-	private List<FieldDto> fields;
+	private List<FieldDto<?>> fields;
+	
+	private String dataSource;
 }

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.minsait.onesait.platform.config.model.Report;
 import com.minsait.onesait.platform.config.services.reports.ReportService;
-import com.minsait.onesait.platform.reports.dto.ReportDataDto;
+import com.minsait.onesait.platform.reports.model.ReportDto;
 import com.minsait.onesait.platform.reports.service.GenerateReportService;
 import com.minsait.onesait.platform.reports.type.ReportTypeEnum;
 
@@ -50,19 +50,24 @@ public class ReportDownloadController {
 	 * @throws JRException
 	 */
 	@GetMapping(value = "/download/report/{id}", produces = { MediaType.APPLICATION_PDF_VALUE })
-    public void download(HttpServletResponse response, @PathVariable("id") Long id) throws IOException, JRException {
+    public void download(HttpServletResponse response, @PathVariable("id") Long id) throws JRException, IOException {
 		
 		Report entity = reportService.findById(id);
 		
 		byte[] bytes = entity.getFile();
 		
 		// -- PROVISIONAL => ELIMINARRRRRRR
-		File file = new File("D:\\work\\onesait-cloud-platform\\sources\\modules\\control-panel\\src\\main\\resources\\report\\test.jrxml");
-		InputStream is = new FileInputStream(file);
+		InputStream is = null;
+		try {
+			File file = new File("D:\\work\\onesait-cloud-platform\\sources\\modules\\control-panel\\src\\main\\resources\\report\\test.jrxml");
+			is = new FileInputStream(file);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		// --------------------------------------
 		
-		ReportDataDto reportData = reportBuilderService.generate(is, entity.getName(), ReportTypeEnum.PDF);
+		ReportDto reportData = reportBuilderService.generate(is, entity.getName(), ReportTypeEnum.PDF);
 		
 		if (reportData.getContent() != null) {
 			// Hace falta una cookie para que el plugin ajax funcione correctamente y retire la animación de loading...

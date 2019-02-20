@@ -1,4 +1,4 @@
-package com.minsait.onesait.platform.controlpanel.converter.reports;
+package com.minsait.onesait.platform.reports.converter;
 
 import java.io.Serializable;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @param <S>
  * @param <T>
  */
-public interface BaseConverter<S, T> {
+public interface BaseConverter<S, T extends Serializable> {
 
 	T convert(S input);
 }

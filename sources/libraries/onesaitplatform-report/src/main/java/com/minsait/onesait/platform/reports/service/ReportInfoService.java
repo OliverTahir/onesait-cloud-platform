@@ -2,7 +2,7 @@ package com.minsait.onesait.platform.reports.service;
 
 import java.io.InputStream;
 
-import com.minsait.onesait.platform.reports.dto.ReportInfoDto;
+import com.minsait.onesait.platform.reports.model.ReportInfoDto;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReport;

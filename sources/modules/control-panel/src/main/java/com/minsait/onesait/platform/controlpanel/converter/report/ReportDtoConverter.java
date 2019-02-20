@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.minsait.onesait.platform.config.model.Report;
 import com.minsait.onesait.platform.controlpanel.controller.reports.dto.ReportDto;
-import com.minsait.onesait.platform.controlpanel.converter.reports.AbstractBaseConverter;
+import com.minsait.onesait.platform.reports.converter.AbstractBaseConverter;
 
 import lombok.extern.slf4j.Slf4j;
 

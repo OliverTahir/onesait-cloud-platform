@@ -28,6 +28,6 @@ public interface ReportRepository extends JpaRepository<Report, Long>, JpaSpecif
 	@Query(FIND_ALL_ACTIVE_BY_USER_ID)
 	List<Report> findAllActiveByUserId(@Param("userId") String userId);
 
-	@EntityGraph(value = "findByIdFetchFile", type = EntityGraphType.FETCH)
+	@EntityGraph(value = "findByIdFetchFileAndParams", type = EntityGraphType.FETCH)
 	Report findById(Long id);
 }
