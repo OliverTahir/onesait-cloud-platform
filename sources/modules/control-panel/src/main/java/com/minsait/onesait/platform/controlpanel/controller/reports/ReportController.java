@@ -16,7 +16,9 @@ package com.minsait.onesait.platform.controlpanel.controller.reports;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.minsait.onesait.platform.config.model.Report;
+import com.minsait.onesait.platform.config.model.ReportParameter;
 import com.minsait.onesait.platform.config.model.Role;
 import com.minsait.onesait.platform.config.model.Role.Type;
 import com.minsait.onesait.platform.config.model.User;
@@ -41,6 +44,7 @@ import com.minsait.onesait.platform.config.services.user.UserService;
 import com.minsait.onesait.platform.controlpanel.controller.reports.dto.ReportDto;
 import com.minsait.onesait.platform.controlpanel.converter.report.ReportConverter;
 import com.minsait.onesait.platform.controlpanel.converter.report.ReportDtoConverter;
+import com.minsait.onesait.platform.reports.model.ParameterDto;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -154,9 +158,21 @@ public class ReportController {
 				throw new RuntimeException(e);
 			}
 		}
-		// ////////////////////////////////////////
+		
+		// Poco eficiente ?
+		Collector<ParameterDto<?>, ?, Map<Long, String>> groupingBy = 
+				Collectors.groupingBy(ParameterDto::getId, Collectors.mapping(ParameterDto::getValue, Collectors.joining()));
+		
+		Map<Long, String> updatePairIdValue = report.getParameters().stream()
+				.collect(groupingBy);
 		
 		
+		List<ReportParameter> parameters = entity.getParameters();
+		for (ReportParameter parameter : parameters) {
+			parameter.setValue(updatePairIdValue.get(parameter.getId()));
+		}
+		
+		/////////////////////////////////////////////////////////////
 		
 		reportService.saveOrUpdate(entity);
 		

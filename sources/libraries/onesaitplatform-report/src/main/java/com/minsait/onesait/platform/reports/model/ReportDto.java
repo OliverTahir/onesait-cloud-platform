@@ -21,6 +21,8 @@ public class ReportDto implements Serializable {
 	
 	private byte[] content;
 	
+	private ReportInfoDto reportInfo;
+	
 	public String getFullName() {
 		return name + "." + extension;
 	}

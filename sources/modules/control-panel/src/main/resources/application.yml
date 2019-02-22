@@ -216,7 +216,7 @@ spring: ## General Config
       properties:
         hibernate:
           format_sql: false
-          show_sql: false
+          show_sql: true
           ddl-auto: validate
          # region.factory_class: com.hazelcast.hibernate.HazelcastCacheRegionFactory
           #cache:

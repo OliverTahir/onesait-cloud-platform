@@ -96,15 +96,15 @@ Report.Create = (function() {
 	
 	var createRow = function (parameter, position) {
 		let row = $('<tr>');
-		row.append($('<td>').html(parameter.name))
-			.append($('<td>')
+		row.append($('<td class="text-left" >').html(parameter.name))
+			.append($('<td class="text-left" >')
 					.append(createColumn (parameter, position)) //.append('</td>')					
 					.append(createHiddenType(parameter, position))
 					.append(createHiddenName(parameter, position))
-					.append(createHiddenDescription(parameter, position))
+					.append(createHiddenDescription(parameter, position)))
 					//.append(createHiddenValue(parameter, position))
-			.append('</td>'))
-			.append($('<td style="word-break:break-all; ">').html(parameter.description));
+			//.append('</td>'))
+			.append($('<td class="text-left" style="word-break:break-all; ">').html(parameter.description));
 		
 		return row;
 	}
@@ -145,7 +145,20 @@ Report.Create = (function() {
 			.attr('id', _id)
 			.attr('name', _name)
 			.attr('value', parameter.type);
-			;
+		
+		return $column;
+	}
+	
+	var createHiddenId = function (parameter, position) {
+		let _id = "parameters" + position + ".id";
+		let _name = "parameters[" + position + "]" + ".id";
+		let _type = "hidden";
+		
+		var $column = $("<input/>")
+			.attr("type", _type)
+			.attr('id', _id)
+			.attr('name', _name)
+			.attr('value', parameter.id);
 		
 		return $column;
 	}

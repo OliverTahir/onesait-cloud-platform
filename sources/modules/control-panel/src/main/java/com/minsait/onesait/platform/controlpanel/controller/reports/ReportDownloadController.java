@@ -67,7 +67,11 @@ public class ReportDownloadController {
 		
 		// --------------------------------------
 		
-		ReportDto reportData = reportBuilderService.generate(is, entity.getName(), ReportTypeEnum.PDF);
+		//ReportDto reportData = reportBuilderService.generate(is, entity.getName(), ReportTypeEnum.PDF);
+		
+		//////ReportDto reportData = reportBuilderService.generate(entity, ReportTypeEnum.PDF);
+		
+		ReportDto reportData = reportBuilderService.generate(entity, ReportTypeEnum.PDF);
 		
 		if (reportData.getContent() != null) {
 			// Hace falta una cookie para que el plugin ajax funcione correctamente y retire la animación de loading...

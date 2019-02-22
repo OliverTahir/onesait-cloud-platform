@@ -12,7 +12,6 @@ import lombok.ToString;
 
 @Getter
 @Setter
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -21,11 +20,13 @@ public class ParameterDto<T> implements Serializable {
 
 	private static final long serialVersionUID = -4973268497792626848L;
 
+	protected Long id;
+	
 	protected String name;
 	
 	protected String description;
 	
-	protected T value;
+	protected String value;
 	
 	protected String type;
 }

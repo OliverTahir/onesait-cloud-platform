@@ -1,6 +1,7 @@
-<div th:fragment="reportEditFragment" id="reportEditFragment">
+<div th:fragment="reportEditFragment" id="reportEditFragment"> <!-- (report) -->
 	
-	<div id="report-settings" style="visibility: hidden;">
+	<!-- th:style="${not #lists.isEmpty(report.parameters)} ? style='visibility: hidden; ' : style='visibility: visible; '}"  -->
+	<div id="report-settings" > <!-- style='visibility: hidden;' -->
 	
 		<div class="row">
 			<div class="col-md-12">
@@ -34,7 +35,16 @@
 										<th scope="col">Description</th>
 								    </tr>
 								</thead>
-								<tbody>Obtiene los datos de BBDD</tbody>
+								<tbody>
+									<tr th:each="parameter, i : ${report.parameters}">
+										<td class="text-left " th:text="${parameter.name}"></td>
+										<td>
+											<input type="hidden" th:value="${parameter.id}" th:field="*{parameters[__${i.index}__].id}" />
+											<input type="text" th:value="${parameter.value}" th:field="*{parameters[__${i.index}__].value}" />
+										</td>
+										<td class="text-left" th:text="${parameter.description}"></td>					
+									</tr>
+								</tbody>
 							</table>
 						</div>
 					</div>

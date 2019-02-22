@@ -5,14 +5,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.minsait.onesait.platform.config.model.Report;
+import com.minsait.onesait.platform.config.model.ReportParameter;
 import com.minsait.onesait.platform.reports.model.ReportDto;
+import com.minsait.onesait.platform.reports.model.ReportInfoDto;
 import com.minsait.onesait.platform.reports.service.GenerateReportService;
 import com.minsait.onesait.platform.reports.type.ReportTypeEnum;
 
-import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -53,14 +57,16 @@ public class GenerateReportServiceImpl implements GenerateReportService {
 		
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		
-		JasperFillManager.fillReportToStream(jasperReport, outputStream, new HashMap<String, Object>(), new JREmptyDataSource());
+		//JsonDataSource datasource = new JsonDataSource
 		
-		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap<String, Object>(), new JREmptyDataSource());
+		JasperFillManager.fillReportToStream(jasperReport, outputStream, new HashMap<String, Object>());
+		
+		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap<String, Object>());
 		
 		byte[] bytes = JasperExportManager.exportReportToPdf(jasperPrint);
 		
 		/////////////////////////////
-		JasperExportManager.exportReportToPdfFile(jasperPrint, "D:\\work\\onesait-cloud-platform\\sources\\modules\\control-panel\\src\\main\\resources\\report\\test.pdf");
+		JasperExportManager.exportReportToPdfFile(jasperPrint, "D:\\tmp\\report\\test.pdf");
 		/////////////////////////////
 		
 		
@@ -76,4 +82,50 @@ public class GenerateReportServiceImpl implements GenerateReportService {
 				.build();
 				
 	}
+	
+	@Override
+	public ReportDto generate(Report entity, ReportTypeEnum pdf) throws JRException {
+		
+		InputStream is = new ByteArrayInputStream(entity.getFile());
+		
+		JasperReport jasperReport = JasperCompileManager.compileReport(is);
+		
+		List<ReportParameter> parameters = entity.getParameters();
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		
+		for (ReportParameter parameter : parameters) {
+			params.put(parameter.getName(), parameter.getValue());
+		}
+				
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		JasperFillManager.fillReportToStream(jasperReport, outputStream, params);
+		
+		
+		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params);
+		
+		byte[] bytes = JasperExportManager.exportReportToPdf(jasperPrint);
+		
+		/////////////////////////////
+		JasperExportManager.exportReportToPdfFile(jasperPrint, "D:\\tmp\\report\\test.pdf");
+		/////////////////////////////
+		
+		try {
+			outputStream.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		/////////////////////////////
+		
+		return ReportDto.builder() //
+				.name(entity.getName()) //
+				.extension("pdf") // TODO
+				.contentType("application/pdf") //
+				.content(bytes) //
+				.build();
+	}
+
 }
