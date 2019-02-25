@@ -163,14 +163,18 @@ public class ReportController {
 		Collector<ParameterDto<?>, ?, Map<Long, String>> groupingBy = 
 				Collectors.groupingBy(ParameterDto::getId, Collectors.mapping(ParameterDto::getValue, Collectors.joining()));
 		
-		Map<Long, String> updatePairIdValue = report.getParameters().stream()
-				.collect(groupingBy);
 		
-		
-		List<ReportParameter> parameters = entity.getParameters();
-		for (ReportParameter parameter : parameters) {
-			parameter.setValue(updatePairIdValue.get(parameter.getId()));
+		if (report.getParameters() != null) {
+			Map<Long, String> updatePairIdValue = report.getParameters().stream()
+					.collect(groupingBy);
+			
+			
+			List<ReportParameter> parameters = entity.getParameters();
+			for (ReportParameter parameter : parameters) {
+				parameter.setValue(updatePairIdValue.get(parameter.getId()));
+			}
 		}
+		
 		
 		/////////////////////////////////////////////////////////////
 		

@@ -25,7 +25,7 @@ import lombok.ToString;
 @Data
 @ToString
 @Entity
-@Table(name = "REPORT_PARAMETER")
+@Table(name = "REPORT_PARAMETER") 
 public class ReportParameter implements Serializable //extends AbstractReportAuditableEntity 
 {
 	private static final long serialVersionUID = 394574298423983486L;

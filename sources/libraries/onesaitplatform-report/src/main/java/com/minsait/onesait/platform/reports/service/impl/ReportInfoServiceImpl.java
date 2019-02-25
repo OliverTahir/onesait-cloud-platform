@@ -50,6 +50,8 @@ public class ReportInfoServiceImpl implements ReportInfoService {
 	@Override
 	public ReportInfoDto extract(JasperReport report) {
 		
+		String[] propertyNames = report.getPropertyNames();
+		
 		List<ParameterDto<?>> parameters = parameterConverter.convert(report.getParameters(), filterSystemParameters);
 		
 		List<FieldDto<?>> fields = fieldConverter.convert(report.getFields());

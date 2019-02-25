@@ -96,7 +96,7 @@
 <!--         <module>libraries/commons</module> -->
 <!-- 		<module>libraries/comms-protocol</module> -->
 <!--         <module>libraries/audit</module> -->
-		
+<!-- 		<module>libraries/onesaitplatform-report</module> -->
 		<!--CLIENT-LIBRARIES-->		
 <!-- 		<module>libraries/client-libraries/java-client</module> -->
 <!-- 		<module>libraries/client-libraries/springboot-client</module> -->
@@ -158,7 +158,7 @@
 <!-- 		<module>modules/digitaltwin-broker</module> -->
 <!-- 		<module>modules/rtdb-maintainer</module> -->
 <!-- 		<module>modules/video-broker</module> -->
-<!-- 		<module>reports</module> -->
+<!-- 		<module>modules/reports</module> -->
 	<!--<module>modules/scripting-engine</module-->
 	<!--<module>modules/streaming-twitter</module>-->
 		
@@ -178,7 +178,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-<!-- 				<version>1.5.9.RELEASE</version> -->
+				<version>1.5.9.RELEASE</version>
 			</plugin>
 			<!-- 
 			<plugin>
