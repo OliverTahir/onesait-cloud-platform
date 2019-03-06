@@ -4,9 +4,7 @@
   </a>
 </p>
 
-# onesait Platform
-
-[TOC]
+# Sofia4Cities powered by onesait Platform
 
 ## Why?
 We are sure that we have a unique offer in the market based on a combination of differential elements:

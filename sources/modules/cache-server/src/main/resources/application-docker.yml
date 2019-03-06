@@ -1,7 +1,0 @@
-spring:
-   boot.admin: #Spring Boot Admin Config    
-      url: http://monitoringuiservice:18100/monitoring    
-      client.service-url: http://cacheservice:${server.port}${server.contextPath}/ 
-
-logging:
-   path: /var/log/platform-logs
