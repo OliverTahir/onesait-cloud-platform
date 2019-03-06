@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -22,6 +23,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
 
+import com.minsait.onesait.platform.config.converters.ReportExtensionConverter;
 import com.minsait.onesait.platform.config.model.base.AbstractReportAuditableEntity;
 
 import lombok.Getter;
@@ -69,6 +71,11 @@ public class Report extends AbstractReportAuditableEntity {
 	@Lob
 	@Type(type = "org.hibernate.type.BinaryType")
 	private byte[] file;
+	
+	@Column(name = "extension")
+	@NotNull
+	@Convert(converter = ReportExtensionConverter.class)
+	private ReportExtension extension;
 	
 	// -- Unidireccional ManyToOne -- //
 	@ManyToOne(fetch = FetchType.LAZY) // , cascade = CascadeType.ALL

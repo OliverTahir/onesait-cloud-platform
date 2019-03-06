@@ -1,6 +1,6 @@
 package com.minsait.onesait.platform.reports.exception;
 
-public class GenerateReportException extends RuntimeException {
+public class GenerateReportException extends ReportException {
 	
 	private static final long serialVersionUID = -4235158988362006733L;
 

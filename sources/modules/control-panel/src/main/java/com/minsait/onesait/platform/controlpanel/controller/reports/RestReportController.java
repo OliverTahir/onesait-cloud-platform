@@ -1,9 +1,9 @@
 package com.minsait.onesait.platform.controlpanel.controller.reports;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.minsait.onesait.platform.config.model.Report;
+import com.minsait.onesait.platform.config.model.ReportExtension;
 import com.minsait.onesait.platform.config.services.reports.ReportService;
 import com.minsait.onesait.platform.controlpanel.controller.reports.dto.ReportDto;
 import com.minsait.onesait.platform.controlpanel.converter.report.ReportDtoConverter;
 import com.minsait.onesait.platform.controlpanel.utils.AppWebUtils;
-import com.minsait.onesait.platform.reports.exception.ReportInfoException;
 import com.minsait.onesait.platform.reports.model.ReportInfoDto;
 import com.minsait.onesait.platform.reports.service.ReportInfoService;
 
@@ -59,7 +59,7 @@ public class RestReportController {
 	}
 	
 	/**
-	 * <p>
+	 * <p>TODO
 	 * 
 	 * see {link ReportExceptionTranslatorAspect}
 	 * see {link ReportInfoExceptionAdvisor}
@@ -71,11 +71,12 @@ public class RestReportController {
 	 * @throws JRException
 	 */
 	@PostMapping(value = "/info", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ReportInfoDto> reportInfo(@RequestParam("file") MultipartFile multipartFile) throws IOException, JRException {
+	public ResponseEntity<ReportInfoDto> reportInfo(@RequestParam("file") MultipartFile multipartFile) throws IOException {
 		
-		InputStream is = multipartFile.getInputStream();
-		
-		ReportInfoDto reportInfoDto = reportInfoService.extract(is);
+		String extension = FilenameUtils.getExtension(multipartFile.getOriginalFilename());
+		ReportExtension reportExtension = ReportExtension.instance(extension);
+		 
+		ReportInfoDto reportInfoDto = reportInfoService.extract(multipartFile.getInputStream(), reportExtension);
 		
 		return new ResponseEntity<ReportInfoDto>(reportInfoDto, HttpStatus.OK);
 	}

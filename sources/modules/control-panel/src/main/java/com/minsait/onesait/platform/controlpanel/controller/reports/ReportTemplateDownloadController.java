@@ -17,7 +17,7 @@ import com.minsait.onesait.platform.config.services.reports.ReportService;
 import net.sf.jasperreports.engine.JRException;
 
 @Controller
-public class ReportDesignDownloadController {
+public class ReportTemplateDownloadController {
 	
 	@Autowired
 	private ReportService reportService;
@@ -44,23 +44,24 @@ public class ReportDesignDownloadController {
 		
 		byte[] bytes = entity.getFile();
 
-		if (bytes != null) {
-			// Hace falta una cookie para que el plugin ajax funcione correctamente y retire la animación de loading...
-			Cookie cookie = new Cookie("fileDownload", "true");
-			cookie.setPath("/");
-			response.addCookie(cookie);
-				
-			//Preparar response
-			response.setHeader("Cache-Control", "max-age=60, must-revalidate");
-			response.setHeader("Content-disposition", "attachment; filename=" + entity.getName() + ".jrxml");
-			response.setContentType("application/jrxml");
-			response.setContentLength(bytes.length);
-						
-			//Enviar fichero al navegador
-			response.getOutputStream().write(bytes);
-			response.flushBuffer();
-		} else{
+		if (entity.getFile() == null) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+			return;
 		}
+		
+		// Hace falta una cookie para que el plugin ajax funcione correctamente y retire la animación de loading...
+		Cookie cookie = new Cookie("fileDownload", "true");
+		cookie.setPath("/");
+		response.addCookie(cookie);
+		
+		//Preparar response
+		response.setHeader("Cache-Control", "max-age=60, must-revalidate");
+		response.setHeader("Content-disposition", "attachment; filename=" + entity.getName() + "." + entity.getExtension().valueOf());
+		response.setContentType("application/jrxml");
+		response.setContentLength(bytes.length);
+					
+		//Enviar fichero al navegador
+		response.getOutputStream().write(bytes);
+		response.flushBuffer();
 	}
 }

@@ -14,11 +14,8 @@
  */
 package com.minsait.onesait.platform.controlpanel.controller.reports;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -35,7 +32,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.minsait.onesait.platform.config.model.Report;
-import com.minsait.onesait.platform.config.model.ReportParameter;
 import com.minsait.onesait.platform.config.model.Role;
 import com.minsait.onesait.platform.config.model.Role.Type;
 import com.minsait.onesait.platform.config.model.User;
@@ -44,7 +40,6 @@ import com.minsait.onesait.platform.config.services.user.UserService;
 import com.minsait.onesait.platform.controlpanel.controller.reports.dto.ReportDto;
 import com.minsait.onesait.platform.controlpanel.converter.report.ReportConverter;
 import com.minsait.onesait.platform.controlpanel.converter.report.ReportDtoConverter;
-import com.minsait.onesait.platform.reports.model.ParameterDto;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -65,7 +60,7 @@ public class ReportController {
 	@Autowired
 	private ReportDtoConverter reportDtoConverter;
 	
-	
+	// TODO: REF-002 (if o modelo en el metodo)
 	//@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@ModelAttribute
 	public List<String> roles() {
@@ -95,6 +90,9 @@ public class ReportController {
 				.map(user -> user.getUserId()) //
 				.collect(Collectors.toList());
 	}
+	// ----------------------------------------------------------------------------
+	
+	
 	
 	@GetMapping(value = "/list", produces = MediaType.TEXT_HTML_VALUE)
 	public String list() {
@@ -137,49 +135,57 @@ public class ReportController {
 		
 		return "redirect:/reports/list";
 	}
-		
+	
+	// TODO: REF-001 (Encapsular)
 	@PostMapping(value = "/update", produces = MediaType.TEXT_HTML_VALUE)
 	public String update(@Valid @ModelAttribute("report") ReportDto report) {
 		
 		log.debug("INI. Report update");
 		
-		Report entity = reportService.findById(report.getId());
+		Report target = reportService.findById(report.getId());
 		
-		// TODO: Encapsular
-		entity.setName(report.getName());
-		entity.setDescription(report.getDescription());
-		entity.setIsPublic(report.getIsPublic());
-		
-		if (!report.getFile().isEmpty()) {
-			log.debug("Actualizamos la plantilla del informe ", report);
-			try {
-				entity.setFile(report.getFile().getBytes());
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		
-		// Poco eficiente ?
-		Collector<ParameterDto<?>, ?, Map<Long, String>> groupingBy = 
-				Collectors.groupingBy(ParameterDto::getId, Collectors.mapping(ParameterDto::getValue, Collectors.joining()));
-		
-		
-		if (report.getParameters() != null) {
-			Map<Long, String> updatePairIdValue = report.getParameters().stream()
-					.collect(groupingBy);
-			
-			
-			List<ReportParameter> parameters = entity.getParameters();
-			for (ReportParameter parameter : parameters) {
-				parameter.setValue(updatePairIdValue.get(parameter.getId()));
-			}
-		}
-		
-		
-		/////////////////////////////////////////////////////////////
+		Report entity = reportConverter.merge(target, report);
 		
 		reportService.saveOrUpdate(entity);
 		
 		return "redirect:/reports/list";
 	}
 }
+
+
+
+
+
+
+// Group value by id
+//private Collector<ParameterDto<?>, ?, Map<Long, String>> groupingById = Collectors.groupingBy(ParameterDto::getId, Collectors.mapping(ParameterDto::getValue, Collectors.joining()));
+
+/*
+Report entity = reportService.findById(report.getId());
+
+// -------------------------------------------------------------------------
+entity.setName(report.getName());
+entity.setDescription(report.getDescription());
+entity.setIsPublic(report.getIsPublic());
+
+if (!report.getFile().isEmpty()) {
+	log.debug("Actualizamos la plantilla del informe ", report);
+	try {
+		entity.setFile(report.getFile().getBytes());
+	} catch (IOException e) {
+		throw new RuntimeException(e);
+	}
+}
+
+// Poco eficiente ?
+if (report.getParameters() != null) {
+	Map<Long, String> updatePairIdValue = report.getParameters().stream()
+			.collect(groupingById);
+	
+	List<ReportParameter> parameters = entity.getParameters();
+	for (ReportParameter parameter : parameters) {
+		parameter.setValue(updatePairIdValue.get(parameter.getId()));
+	}
+}
+// --------------------------------------------------------------------------
+*/

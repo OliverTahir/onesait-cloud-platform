@@ -8,8 +8,11 @@ import java.util.function.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.minsait.onesait.platform.config.model.ReportExtension;
 import com.minsait.onesait.platform.reports.converter.FieldDtoConverter;
 import com.minsait.onesait.platform.reports.converter.ParameterDtoConverter;
+import com.minsait.onesait.platform.reports.exception.GenerateReportException;
+import com.minsait.onesait.platform.reports.exception.ReportInfoException;
 import com.minsait.onesait.platform.reports.model.FieldDto;
 import com.minsait.onesait.platform.reports.model.ParameterDto;
 import com.minsait.onesait.platform.reports.model.ReportInfoDto;
@@ -20,18 +23,20 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.util.JRLoader;
 
 @Service
 @Slf4j
 public class ReportInfoServiceImpl implements ReportInfoService {
 
+	// -- Converter -- //
 	@Autowired
 	private ParameterDtoConverter parameterConverter;
 	
 	@Autowired
 	private FieldDtoConverter fieldConverter;
 	
-	
+	// -- Filter -- //
 	private Predicate<JRParameter> filterSystemParameters = 
 			parameter -> !parameter.isSystemDefined() && parameter.isForPrompting();
 	
@@ -40,17 +45,51 @@ public class ReportInfoServiceImpl implements ReportInfoService {
 	
 	
 	@Override
-	public ReportInfoDto extract(InputStream is) throws JRException {
+	public ReportInfoDto extract(InputStream is, ReportExtension reportExtension) {
+		ReportInfoDto reportInfo = null;
 		
-		JasperReport report = JasperCompileManager.compileReport(is); 
+		switch (reportExtension) {
+			case JRXML:
+				reportInfo = extractFromJrxml(is, reportExtension);
+				break;
+				
+			case JASPER:
+				reportInfo = extractFromJasper(is, reportExtension);
+				break;
+	
+			default:
+				throw new GenerateReportException("Unknown extension, must be jrxml or jasper");
+		}
 		
-		return extract(report);
+		return reportInfo;	
 	}
 	
-	@Override
-	public ReportInfoDto extract(JasperReport report) {
-		
-		String[] propertyNames = report.getPropertyNames();
+	private ReportInfoDto extractFromJrxml(InputStream is, ReportExtension reportExtension) {
+		try {
+			
+			JasperReport report = JasperCompileManager.compileReport(is);
+			
+			return extractFromReport(report);
+			
+		} catch (JRException e) {
+			throw new ReportInfoException(e);
+		} 
+	}
+	
+	private ReportInfoDto extractFromJasper(InputStream is, ReportExtension reportExtension) {
+		try {
+			
+			JasperReport report = (JasperReport) JRLoader.loadObject(is);
+			
+			return extractFromReport(report);
+			
+		} catch (JRException e) {
+			throw new ReportInfoException(e);
+		} 
+	}
+	
+	private ReportInfoDto extractFromReport(JasperReport report) {
+		log.debug("INI. Extract data from report: {}", report.getName());
 		
 		List<ParameterDto<?>> parameters = parameterConverter.convert(report.getParameters(), filterSystemParameters);
 		
@@ -70,28 +109,3 @@ public class ReportInfoServiceImpl implements ReportInfoService {
 				.build();
 	}
 }
-
-
-
-/*JRDataset mainDataset = report.getMainDataset();
-if (mainDataset != null) {
-	JRQuery query = mainDataset.getQuery();
-	System.out.println(query.getText()); 
-}
-
-
-JRDataset[] datasets = report.getDatasets();
-if (datasets !=  null) {
-	for (JRDataset dataset : datasets) {
-		
-		JRQuery query = dataset.getQuery();
-		System.out.println(query.getText()); 
-		
-		JRParameter[] dsParameters = dataset.getParameters();
-		if (dsParameters != null) {
-			for (JRParameter dsParameter : dsParameters) {
-				System.out.println(dsParameter);
-			}
-		}
-	}
-}*/

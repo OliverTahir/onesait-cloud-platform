@@ -23,7 +23,7 @@ public enum ReportParameterType {
 
 	STRING("java.lang.String", "VARCHAR"),
 	INTEGER("java.lang.Integer", "INTEGER"),
-	FLOAT("java.lang.Double", "DOUBLE"),
+	DOUBLE("java.lang.Double", "DOUBLE"),
 	DATE("java.util.Date", "DATE")
 	;
 	
