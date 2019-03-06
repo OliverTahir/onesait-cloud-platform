@@ -105,13 +105,11 @@
 		<module>libraries/security/security-ui-ri</module>
 		<module>libraries/security/security-ldap-ri</module>
 		<module>libraries/security/security-oauth2-ri</module>
-		<module>libraries/security/kafka-login</module>
 		
 		<!--PERSISTENCE-->
 		<module>libraries/persistence/interfaces</module>	
 		<module>libraries/persistence/mongodb-impl</module>		
-		<module>libraries/persistence/elasticsearch-impl</module>		
-		<module>libraries/persistence/hadoop-impl</module>
+		<module>libraries/persistence/elasticsearch-impl</module>	
 		<module>libraries/persistence/external-impl</module>
 
 		<!--DIGITAL TWIN-->		
@@ -138,7 +136,6 @@
 		<module>services/persistence-services</module>	
         <module>services/router/router-services</module>
         <module>services/router/router-crud</module>
-        <module>services/router/router-digitaltwin</module>
 		
 		
 		<!--MODULES-->	
@@ -146,7 +143,6 @@
 		<module>libraries/iot-broker-plugable</module>
 		<module>modules/iot-broker</module>		
 		<module>modules/control-panel</module>		
-        <module>modules/monitoring-ui</module>
         <module>modules/api-manager</module>
 		<module>modules/planner</module>
 	    <module>modules/semantic-inf-broker</module>
@@ -155,19 +151,10 @@
 		<module>modules/dashboard-engine</module>
 		<module>modules/device-simulator</module>
 		<module>modules/oauth-server</module>
-		<module>modules/digitaltwin-broker</module>
-		<module>modules/rtdb-maintainer</module>
-		<module>modules/video-broker</module>
-	<!--<module>modules/scripting-engine</module-->
-	<!--<module>modules/streaming-twitter</module>-->
 		
 		<!--THEMES -->
 		<module>libraries/themes/onesaitplatform-base-theme</module>
-		<module>libraries/themes/onesaitplatform-iwire-theme</module>
 		
-		<!--CONTRIBUTIONS -->
-		<module>libraries/contributions/spring-boot-admin-server-ui</module>
-		<module>libraries/contributions/spring-boot-admin-server-ui-login</module>
 
 	</modules>
 	

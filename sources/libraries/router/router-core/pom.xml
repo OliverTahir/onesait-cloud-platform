@@ -41,12 +41,6 @@
 		
 		<dependency>
 			<groupId>com.minsait.onesait.platform</groupId>
-			<artifactId>onesaitplatform-router-digitaltwin</artifactId>
-			<version>${onesaitplatform.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.minsait.onesait.platform</groupId>
 			<artifactId>onesaitplatform-config-resources</artifactId>
 			<version>${onesaitplatform.version}</version>
 		</dependency>
