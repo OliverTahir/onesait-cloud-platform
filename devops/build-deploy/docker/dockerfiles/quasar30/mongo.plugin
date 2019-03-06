@@ -1,6 +1,0 @@
-{
-"main_jar" : "quasar-mongodb-internal-assembly-30.0.0.jar",
-"classpath" :[
-"quasar-mongodb-internal-assembly-30.0.0.jar"
-]
-}​
