@@ -170,7 +170,7 @@
 		<module>libraries/contributions/spring-boot-admin-server-ui</module>
 		<module>libraries/contributions/spring-boot-admin-server-ui-login</module>
 
-		<module>onesaitplatform-report</module>
+<!-- 		<module>onesaitplatform-report</module> -->
 	</modules>
 	
 	<build>
