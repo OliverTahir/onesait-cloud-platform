@@ -1,4 +1,4 @@
-package com.minsait.onesait.platform.reports.converter;
+package com.minsait.onesait.platform.reports.service.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 
 import com.minsait.onesait.platform.config.model.Report;
 import com.minsait.onesait.platform.config.model.ReportExtension;
+import com.minsait.onesait.platform.reports.converter.ParameterMapConverter;
 import com.minsait.onesait.platform.reports.exception.GenerateReportException;
 import com.minsait.onesait.platform.reports.model.ReportDto;
 import com.minsait.onesait.platform.reports.service.GenerateReportService;
-import com.minsait.onesait.platform.reports.service.impl.ParameterMapConverter;
 import com.minsait.onesait.platform.reports.type.ReportTypeEnum;
 
 import lombok.extern.slf4j.Slf4j;

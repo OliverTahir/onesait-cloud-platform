@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.minsait.onesait.platform.config.model.ReportParameter;
 import com.minsait.onesait.platform.config.model.ReportParameterType;
-import com.minsait.onesait.platform.reports.converter.AbstractBaseConverter;
+import com.minsait.onesait.platform.reports.converter.base.AbstractBaseConverter;
 import com.minsait.onesait.platform.reports.model.ParameterDto;
 
 @Component

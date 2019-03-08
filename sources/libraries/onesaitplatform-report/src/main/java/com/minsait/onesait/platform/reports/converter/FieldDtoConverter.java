@@ -2,6 +2,7 @@ package com.minsait.onesait.platform.reports.converter;
 
 import org.springframework.stereotype.Component;
 
+import com.minsait.onesait.platform.reports.converter.base.AbstractBaseConverter;
 import com.minsait.onesait.platform.reports.model.FieldDto;
 
 import net.sf.jasperreports.engine.JRField;

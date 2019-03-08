@@ -1,4 +1,4 @@
-package com.minsait.onesait.platform.reports.service.impl;
+package com.minsait.onesait.platform.reports.converter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

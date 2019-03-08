@@ -13,7 +13,7 @@ import com.minsait.onesait.platform.config.model.ReportType;
 import com.minsait.onesait.platform.config.model.User;
 import com.minsait.onesait.platform.controlpanel.controller.reports.dto.ReportDto;
 import com.minsait.onesait.platform.controlpanel.utils.AppWebUtils;
-import com.minsait.onesait.platform.reports.converter.BaseConverter;
+import com.minsait.onesait.platform.reports.converter.base.BaseConverter;
 import com.minsait.onesait.platform.reports.exception.UploadFileException;
 
 import lombok.extern.slf4j.Slf4j;

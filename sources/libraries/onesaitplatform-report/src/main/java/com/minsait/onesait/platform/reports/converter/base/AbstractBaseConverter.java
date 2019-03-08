@@ -1,4 +1,4 @@
-package com.minsait.onesait.platform.reports.converter;
+package com.minsait.onesait.platform.reports.converter.base;
 
 import java.io.Serializable;
 import java.util.ArrayList;
