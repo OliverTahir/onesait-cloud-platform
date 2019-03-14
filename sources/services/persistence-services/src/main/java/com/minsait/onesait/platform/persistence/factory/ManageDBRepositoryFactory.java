@@ -23,7 +23,6 @@ import com.minsait.onesait.platform.config.model.Ontology.RtdbDatasource;
 import com.minsait.onesait.platform.config.repository.OntologyRepository;
 import com.minsait.onesait.platform.persistence.elasticsearch.ElasticSearchManageDBRepository;
 import com.minsait.onesait.platform.persistence.exceptions.DBPersistenceException;
-import com.minsait.onesait.platform.persistence.hadoop.common.NameBeanConst;
 import com.minsait.onesait.platform.persistence.interfaces.ManageDBRepository;
 import com.minsait.onesait.platform.persistence.mongodb.MongoNativeManageDBRepository;
 
@@ -35,10 +34,6 @@ public class ManageDBRepositoryFactory {
 
 	@Autowired
 	private ElasticSearchManageDBRepository elasticManage;
-
-	@Autowired
-	@Qualifier(NameBeanConst.KUDU_MANAGE_DB_REPO_BEAN_NAME)
-	private ManageDBRepository kuduManageDBRepository;
 
 	@Autowired
 	private OntologyRepository ontologyRepository;
@@ -54,9 +49,7 @@ public class ManageDBRepositoryFactory {
 			return mongoManage;
 		else if (dataSource.equals(RtdbDatasource.ELASTIC_SEARCH))
 			return elasticManage;
-		else if (dataSource.equals(RtdbDatasource.KUDU)) {
-			return kuduManageDBRepository;
-		} else
+		else
 			return mongoManage;
 	}
 

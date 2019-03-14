@@ -15,7 +15,6 @@
 package com.minsait.onesait.platform.persistence.factory;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.minsait.onesait.platform.config.model.Ontology;
@@ -25,7 +24,6 @@ import com.minsait.onesait.platform.persistence.elasticsearch.ElasticSearchBasic
 import com.minsait.onesait.platform.persistence.exceptions.DBPersistenceException;
 import com.minsait.onesait.platform.persistence.external.api.rest.ExternalApiRestOpsDBRepository;
 import com.minsait.onesait.platform.persistence.external.virtual.VirtualOntologyDBRepository;
-import com.minsait.onesait.platform.persistence.hadoop.common.NameBeanConst;
 import com.minsait.onesait.platform.persistence.interfaces.BasicOpsDBRepository;
 import com.minsait.onesait.platform.persistence.mongodb.MongoBasicOpsDBRepository;
 
@@ -47,10 +45,6 @@ public class BasicOpsDBRepositoryFactory {
 	@Autowired
 	private VirtualOntologyDBRepository virtualRepository;
 
-	@Autowired
-	@Qualifier(NameBeanConst.KUDU_BASIC_OPS_BEAN_NAME)
-	private BasicOpsDBRepository kuduBasicOpsDBRepository;
-
 	public BasicOpsDBRepository getInstance(String ontologyId) throws DBPersistenceException {
 		Ontology ds = ontologyRepository.findByIdentification(ontologyId);
 		RtdbDatasource dataSource = ds.getRtdbDatasource();
@@ -62,8 +56,6 @@ public class BasicOpsDBRepositoryFactory {
 			return mongoBasicOps;
 		} else if (RtdbDatasource.ELASTIC_SEARCH.equals(dataSource)) {
 			return elasticBasicOps;
-		} else if (RtdbDatasource.KUDU.equals(dataSource)) {
-			return kuduBasicOpsDBRepository;
 		} else if (RtdbDatasource.API_REST.equals(dataSource)) {
 			return externalApiRest;
 		} else if (RtdbDatasource.VIRTUAL.equals(dataSource)) {

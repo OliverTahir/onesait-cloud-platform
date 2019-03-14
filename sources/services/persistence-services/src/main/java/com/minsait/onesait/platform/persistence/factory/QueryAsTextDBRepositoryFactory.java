@@ -17,7 +17,6 @@ package com.minsait.onesait.platform.persistence.factory;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.minsait.onesait.platform.config.model.ClientPlatform;
@@ -28,7 +27,6 @@ import com.minsait.onesait.platform.config.services.ontology.OntologyService;
 import com.minsait.onesait.platform.persistence.elasticsearch.ElasticSearchQueryAsTextDBRepository;
 import com.minsait.onesait.platform.persistence.exceptions.DBPersistenceException;
 import com.minsait.onesait.platform.persistence.external.virtual.QueryAsTextVirtualDBImpl;
-import com.minsait.onesait.platform.persistence.hadoop.common.NameBeanConst;
 import com.minsait.onesait.platform.persistence.interfaces.QueryAsTextDBRepository;
 import com.minsait.onesait.platform.persistence.mongodb.services.QueryAsTextMongoDBImpl;
 
@@ -40,10 +38,6 @@ public class QueryAsTextDBRepositoryFactory {
 
 	@Autowired
 	private ElasticSearchQueryAsTextDBRepository queryElasticSearch;
-
-	@Autowired
-	@Qualifier(NameBeanConst.KUDU_QUERY_REPO_BEAN_NAME)
-	private QueryAsTextDBRepository kuduQueryAsTextDBRepository;
 
 	@Autowired
 	private OntologyService ontologyService;
@@ -80,8 +74,6 @@ public class QueryAsTextDBRepositoryFactory {
 			return queryMongo;
 		else if (dataSource.equals(RtdbDatasource.ELASTIC_SEARCH))
 			return queryElasticSearch;
-		else if (dataSource.equals(RtdbDatasource.KUDU))
-			return kuduQueryAsTextDBRepository;
 		else if (dataSource.equals(RtdbDatasource.VIRTUAL))
 			return queryVirtual;
 		else

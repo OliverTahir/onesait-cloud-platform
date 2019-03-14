@@ -16,13 +16,13 @@ package com.minsait.onesait.platform.controlpanel.services.hadoop;
 
 import java.util.List;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.minsait.onesait.platform.config.model.Ontology.RtdbDatasource;
 import com.minsait.onesait.platform.persistence.common.DescribeColumnData;
-import com.minsait.onesait.platform.persistence.hadoop.json.JsonGeneratorFromHive;
-import com.minsait.onesait.platform.persistence.hadoop.json.JsonSchemaHive;
+
 import com.minsait.onesait.platform.persistence.services.ManageDBPersistenceServiceFacade;
 
 import lombok.extern.slf4j.Slf4j;
@@ -34,8 +34,8 @@ public class HadoopService {
 	@Autowired
 	private ManageDBPersistenceServiceFacade manageDBPersistenceServiceFacade;
 
-	@Autowired
-	private JsonGeneratorFromHive jsonGenerator;
+	/*@Autowired
+	private JsonGeneratorFromHive jsonGenerator;*/
 
 	public List<String> getHiveTables() {
 		return manageDBPersistenceServiceFacade.getListOfTables(RtdbDatasource.KUDU);
@@ -47,8 +47,9 @@ public class HadoopService {
 	}
 
 	public String generateSchemaFromHive(String tablename) {
-		List<DescribeColumnData> columns = describe(tablename);
+		throw new NotImplementedException();
+		/*List<DescribeColumnData> columns = describe(tablename);
 		JsonSchemaHive schema = jsonGenerator.parse(tablename, columns);
-		return schema.build();
+		return schema.build();*/
 	}
 }
