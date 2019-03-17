@@ -48,21 +48,33 @@ Report.List = (function() {
 	var ajaxDownload = function(url, httpMethod, payload){
 		$.fileDownload(url, {
     		httpMethod: httpMethod,
-    		dataType:"json", 
-            contentType:"application/json",
-            data: payload,
+            data: JSON.stringify(payload),
     		successCallback: function(url) {
     			//$('#loadingDialog').dialog('close');
     		},
     		failCallback: function(responseHtml, url) {
-    			alert('Ha ocurrido un error');
+    			$.alert({
+					title : 'ERROR!',
+					type : 'red',
+					theme : 'light',
+					content : 'Could not download report'
+				});
     		}
     	});
 	}
 	
-	var runReportWithParameters = function(obj){
+	var runReportWithParameters = function(){
 		var id = $('#current-report').val();
-		var elements =  $(obj).closest('tbody').find('tr');
+		var elements =  $('#table-body').find('tr');
+		var parametersArray = [];
+		elements.each(function(){
+			var name = $(this).find("input[name='name\\[\\]']").val();
+			var value = $(this).find("input[name='value\\[\\]']").val();
+			var type = $(this).find("input[name='type\\[\\]']").val();
+			var parameter = {"name":name, "type": type, "value":value, "description": ""};
+			parametersArray.push(parameter);
+		});
+		ajaxDownload('/controlpanel/reports/download/report/'+ id, 'POST', parametersArray);
 		
 
 	}
@@ -79,7 +91,7 @@ Report.List = (function() {
 			        }).done(function(data) {
 			        	var parameters = data;
 			        	if(parameters == null || parameters.length == 0)
-			        		ajaxDownload('/controlpanel/reports/download/report/'+ id, 'GET', []);
+			        		ajaxDownload('/controlpanel/reports/download/report/'+ id, 'POST', []);
 			        	else{
 			        		if ($('#parameters').attr('data-loaded') === 'true'){
 			    				$('#table_parameters > tbody').html("");
