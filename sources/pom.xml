@@ -11,7 +11,7 @@
 	<description>onesait Platform is the Digital Platform of Minsait, aka Open Platform</description>
 	
 	<properties>	
-		<onesaitplatform.version>1.0.0</onesaitplatform.version>
+	<onesaitplatform.version>1.0.0</onesaitplatform.version>
 		<docker.image.username>onesaitplatform</docker.image.username>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -97,7 +97,6 @@
         <module>libraries/commons</module>
 		<module>libraries/comms-protocol</module>
         <module>libraries/audit</module>
-		<module>libraries/onesaitplatform-report</module>
 		
 		<!--CLIENT-LIBRARIES-->		
 		<module>libraries/client-libraries/java-client</module>
@@ -113,6 +112,7 @@
 		<module>libraries/persistence/mongodb-impl</module>		
 		<module>libraries/persistence/elasticsearch-impl</module>	
 		<module>libraries/persistence/external-impl</module>
+		<module>libraries/persistence/hadoop-impl</module>
 
 		<!--DIGITAL TWIN-->		
 		<!--  module>libraries/digital-twin/digital-twin-library</module-->	

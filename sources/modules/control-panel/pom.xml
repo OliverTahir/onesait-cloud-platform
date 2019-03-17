@@ -244,11 +244,11 @@
 			<artifactId>smtp</artifactId>
 			<version>1.6.1</version>
 		</dependency>
-		
+		<!-- JASPER REPORTS -->
 		<dependency>
-			<groupId>com.minsait.onesait.platform</groupId>
-			<artifactId>onesaitplatform-report</artifactId>
-			<version>1.0.0</version>
+		    <groupId>net.sf.jasperreports</groupId>
+		    <artifactId>jasperreports</artifactId>
+		    <version>6.7.0</version>
 		</dependency>
 	</dependencies>
 
