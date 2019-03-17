@@ -1,33 +1,31 @@
-package com.minsait.onesait.platform.config.repository.report;
+/**
+ * Copyright minsait by Indra Sistemas, S.A.
+ * 2013-2018 SPAIN
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.minsait.onesait.platform.config.repository;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.minsait.onesait.platform.config.model.Report;
 
 @Repository
-public interface ReportRepository extends JpaRepository<Report, Long>, JpaSpecificationExecutor<Report> {
-//extends JpaSpecificationExecutor<Report>, JpaRepository<Report, Long> {
-	
-	static final String FIND_ALL_ACTIVE = 
-			"select r from Report r where r.active = 1";
-	
-	static final String FIND_ALL_ACTIVE_BY_USER_ID = 
-			"select r from Report r where r.active = 1 and r.user.userId = :userId";
-	
-	@Query(FIND_ALL_ACTIVE)
-	List<Report> findAllActive();
+public interface ReportRepository extends JpaRepository<Report, String> {
 
-	@Query(FIND_ALL_ACTIVE_BY_USER_ID)
-	List<Report> findAllActiveByUserId(@Param("userId") String userId);
+	List<Report> findByActiveTrue();
 
-	@EntityGraph(value = "findByIdFetchFileAndParams", type = EntityGraphType.FETCH)
-	Report findById(Long id);
+	List<Report> findByUserAndActiveTrue(String userId);
+
 }

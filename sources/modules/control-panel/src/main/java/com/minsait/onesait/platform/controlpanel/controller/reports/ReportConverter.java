@@ -1,4 +1,18 @@
-package com.minsait.onesait.platform.controlpanel.converter.report;
+/**
+ * Copyright minsait by Indra Sistemas, S.A.
+ * 2013-2018 SPAIN
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.minsait.onesait.platform.controlpanel.controller.reports;
 
 import java.io.IOException;
 
@@ -8,56 +22,59 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.minsait.onesait.platform.config.model.Report;
-import com.minsait.onesait.platform.config.model.ReportExtension;
-import com.minsait.onesait.platform.config.model.ReportType;
+import com.minsait.onesait.platform.config.model.Report.ReportExtension;
 import com.minsait.onesait.platform.config.model.User;
-import com.minsait.onesait.platform.controlpanel.controller.reports.dto.ReportDto;
+import com.minsait.onesait.platform.controlpanel.controller.reports.model.ReportDto;
+import com.minsait.onesait.platform.controlpanel.services.report.UploadFileException;
 import com.minsait.onesait.platform.controlpanel.utils.AppWebUtils;
-import com.minsait.onesait.platform.reports.converter.base.BaseConverter;
-import com.minsait.onesait.platform.reports.exception.UploadFileException;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class ReportConverter implements BaseConverter<ReportDto, Report> {
+public class ReportConverter {
 
 	@Autowired
 	private AppWebUtils appWebUtils;
-	
-	@Autowired
-	private ReportParamenterConverter paramenterConverter;
-	
-	// TODO: REF-003
-	@Override
+
 	public Report convert(ReportDto report) {
 		log.debug("INI. Convert entity Report: {}  -->  ReportDto");
-		
+
 		if (report.getFile().isEmpty()) {
 			log.error("Report template musbe not empty");
 			throw new UploadFileException("Report template musbe not empty");
 		}
-		
-		Report entity = new Report();
-		
+
+		final Report entity = new Report();
+
 		entity.setName(report.getName());
 		entity.setDescription(report.getDescription());
 		entity.setIsPublic(report.getIsPublic());
 		entity.setFile(getReportBytes(report.getFile()));
 		entity.setExtension(getReportExtension(report.getFile()));
-		entity.setParameters(paramenterConverter.convert(report.getParameters()));
-		
+
 		// Inner
 		entity.setActive(Boolean.TRUE);
 		entity.setUser(findUser());
-		entity.setReportType(findReportType());
-		
+
 		return entity;
 	}
-	
-	public Report merge (Report target, ReportDto source) {
-		Report entity = target;
-		
+
+	public ReportDto convert(Report report) {
+		log.debug("INI. Convert entity Report: {}", report);
+
+		final ReportDto reportDto = ReportDto.builder().id(report.getId()).name(report.getName())
+				.description(report.getDescription()).owner(report.getUser().getUserId()).created(report.getCreatedAt())
+				.isPublic(report.getIsPublic()).build();
+
+		log.debug("END. Converted ReportDto: {}", reportDto);
+
+		return reportDto;
+	}
+
+	public Report merge(Report target, ReportDto source) {
+		final Report entity = target;
+
 		entity.setName(source.getName());
 		entity.setDescription(source.getDescription());
 		entity.setIsPublic(source.getIsPublic());
@@ -65,35 +82,28 @@ public class ReportConverter implements BaseConverter<ReportDto, Report> {
 			entity.setFile(getReportBytes(source.getFile()));
 			entity.setExtension(getReportExtension(source.getFile()));
 		}
-		entity.setParameters(paramenterConverter.merge(target.getParameters(), source.getParameters()));
-		
+
 		return entity;
 	}
-	
+
 	// -- Inner methods -- //
 	private byte[] getReportBytes(MultipartFile file) {
 		try {
 			return file.getBytes();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new UploadFileException();
 		}
 	}
 
-	private ReportExtension getReportExtension (MultipartFile file){
-		String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-		return ReportExtension.instance(extension);
+	private ReportExtension getReportExtension(MultipartFile file) {
+
+		return ReportExtension.valueOf(FilenameUtils.getExtension(file.getOriginalFilename()).toUpperCase());
 	}
-	
+
 	private User findUser() {
-		User user = new User();
+		final User user = new User();
 		user.setUserId(appWebUtils.getUserId());
 		return user;
 	}
-	
-	// TODO: REF-DES-005
-	private ReportType findReportType() {
-		ReportType reportType = new ReportType();
-		reportType.setId(3L);
-		return reportType;
-	}
+
 }

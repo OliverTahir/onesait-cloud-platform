@@ -14,34 +14,54 @@
  */
 package com.minsait.onesait.platform.controlpanel.controller.reports;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.util.HashMap;
 import java.util.List;
-import java.util.function.Predicate;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.net.HttpHeaders;
 import com.minsait.onesait.platform.config.model.Report;
-import com.minsait.onesait.platform.config.model.Role;
+import com.minsait.onesait.platform.config.model.Report.ReportExtension;
 import com.minsait.onesait.platform.config.model.Role.Type;
 import com.minsait.onesait.platform.config.model.User;
 import com.minsait.onesait.platform.config.services.reports.ReportService;
 import com.minsait.onesait.platform.config.services.user.UserService;
-import com.minsait.onesait.platform.controlpanel.controller.reports.dto.ReportDto;
-import com.minsait.onesait.platform.controlpanel.converter.report.ReportConverter;
-import com.minsait.onesait.platform.controlpanel.converter.report.ReportDtoConverter;
+import com.minsait.onesait.platform.controlpanel.controller.reports.model.ParameterMapConverter;
+import com.minsait.onesait.platform.controlpanel.controller.reports.model.ReportDto;
+import com.minsait.onesait.platform.controlpanel.controller.reports.model.ReportInfoDto;
+import com.minsait.onesait.platform.controlpanel.controller.reports.model.ReportParameter;
+import com.minsait.onesait.platform.controlpanel.controller.reports.model.ReportTypeEnum;
+import com.minsait.onesait.platform.controlpanel.services.report.ReportInfoService;
+import com.minsait.onesait.platform.controlpanel.utils.AppWebUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.engine.JRException;
 
 @Slf4j
 @RequestMapping("/reports")
@@ -50,142 +70,164 @@ public class ReportController {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private ReportService reportService;
 
 	@Autowired
 	private ReportConverter reportConverter;
-	
+
 	@Autowired
-	private ReportDtoConverter reportDtoConverter;
-	
-	// TODO: REF-002 (if o modelo en el metodo)
-	//@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-	@ModelAttribute
-	public List<String> roles() {
-		
-		Predicate<Role> excludedRoles = rol -> !Type.ROLE_ADMINISTRATOR.toString().equals(rol.getId()) 
-				&& !Type.ROLE_SYS_ADMIN.toString().equals(rol.getId());
-		
-		return userService.getAllRoles().stream()
-				.filter(excludedRoles)
-				.map(rol -> rol.getId())
-				.collect(Collectors.toList());
+	private ParameterMapConverter parameterMapConverter;
+
+	@Autowired
+	private ReportInfoService reportInfoService;
+
+	@Autowired
+	private AppWebUtils utils;
+
+	@GetMapping(value = "/list/data", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<ReportDto>> listData() {
+
+		final List<Report> reports = utils.isAdministrator() ? reportService.findAllActiveReports()
+				: reportService.findAllActiveReportsByUserId(utils.getUserId());
+
+		return new ResponseEntity<>(reports.stream().map(r -> reportConverter.convert(r)).collect(Collectors.toList()),
+				HttpStatus.OK);
 	}
-	
-	//@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-	@ModelAttribute("owners")
-	public List<String> owners() {
-		
-		//TODO: List<User> users = userService.getAllActiveUsersWithoutRoles(Type.ROLE_ADMINISTRATOR, Type.ROLE_SYS_ADMIN);
-			
-		// Provisional
-		List<User> users = userService.getAllActiveUsers().stream()
-				.filter(user -> !Type.ROLE_ADMINISTRATOR.toString().equals(user.getRole().getId()) && !Type.ROLE_SYS_ADMIN.toString().equals(user.getRole().getId()))
-				.collect(Collectors.toList());
-		// --------
-		
-		return users.stream() //
-				.map(user -> user.getUserId()) //
-				.collect(Collectors.toList());
-	}
-	// ----------------------------------------------------------------------------
-	
-	
-	
+
 	@GetMapping(value = "/list", produces = MediaType.TEXT_HTML_VALUE)
-	public String list() {
-		log.debug("INI. Report list.");
-		
+	public String list(Model model) {
+		model.addAttribute("owners",
+				userService.getAllActiveUsers().stream()
+						.filter(user -> !Type.ROLE_ADMINISTRATOR.toString().equals(user.getRole().getId())
+								&& !Type.ROLE_SYS_ADMIN.toString().equals(user.getRole().getId()))
+						.map(User::getUserId).collect(Collectors.toList()));
 		return "reports/list";
 	}
-	
+
 	@GetMapping(value = "/create", produces = MediaType.TEXT_HTML_VALUE)
 	public ModelAndView create(Model model) {
-		
-		log.debug("INI. REdirect Report create. Create empty ReportDto");
-		
-		ReportDto report = ReportDto.builder()
-				.isPublic(Boolean.FALSE)
-				.build();
-		
-		return new ModelAndView("reports/create", "report", report);
-	}
-	
-	@GetMapping(value = "/edit/{id}", produces = MediaType.TEXT_HTML_VALUE)
-	public ModelAndView edit(@PathVariable("id") Long id) {
-		
-		log.debug("INI. Redirect to Report edit. Find report id: {}", id);
-		
-		Report entity = reportService.findById(id);
 
-		ReportDto report = reportDtoConverter.convert(entity);
-		
+		final ReportDto report = ReportDto.builder().isPublic(Boolean.FALSE).build();
+
 		return new ModelAndView("reports/create", "report", report);
 	}
-	
+
+	@GetMapping(value = "/edit/{id}", produces = MediaType.TEXT_HTML_VALUE)
+	public ModelAndView edit(@PathVariable("id") String id) {
+
+		log.debug("INI. Redirect to Report edit. Find report id: {}", id);
+
+		final Report entity = reportService.findById(id);
+
+		final ReportDto report = reportConverter.convert(entity);
+
+		return new ModelAndView("reports/create", "report", report);
+	}
+
 	@PostMapping(value = "/save", produces = MediaType.TEXT_HTML_VALUE)
 	public String save(@Valid @ModelAttribute("report") ReportDto report) {
 		log.debug("INI. Report save");
-		
-		Report entity = reportConverter.convert(report);
-		
+
+		final Report entity = reportConverter.convert(report);
+
 		reportService.saveOrUpdate(entity);
-		
+
 		return "redirect:/reports/list";
 	}
-	
-	// TODO: REF-001 (Encapsular)
-	@PostMapping(value = "/update", produces = MediaType.TEXT_HTML_VALUE)
+
+	@PutMapping(value = "/update", produces = MediaType.TEXT_HTML_VALUE)
 	public String update(@Valid @ModelAttribute("report") ReportDto report) {
-		
+
 		log.debug("INI. Report update");
-		
-		Report target = reportService.findById(report.getId());
-		
-		Report entity = reportConverter.merge(target, report);
-		
+
+		final Report target = reportService.findById(report.getId());
+
+		final Report entity = reportConverter.merge(target, report);
+
 		reportService.saveOrUpdate(entity);
-		
+
 		return "redirect:/reports/list";
 	}
-}
 
+	@PostMapping(value = "/download/report/{id}", produces = { MediaType.APPLICATION_PDF_VALUE })
+	public ResponseEntity<?> downloadReport(@PathVariable("id") String id, @RequestBody String json)
+			throws JRException, IOException {
 
+		final Report entity = reportService.findById(id);
 
+		if (entity == null || entity.getFile() == null) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		final String decoded = URLDecoder.decode(json, "UTF-8");
+		final ObjectMapper mapper = new ObjectMapper();
+		final List<ReportParameter> parameters = mapper.readValue(decoded.substring(0, decoded.length() - 1),
+				new TypeReference<List<ReportParameter>>() {
+				});
 
+		final Map<String, Object> map = parameters == null ? new HashMap<>()
+				: parameterMapConverter.convert(parameters);
 
+		final byte[] content = reportInfoService.generate(entity, ReportTypeEnum.PDF, map);
 
-// Group value by id
-//private Collector<ParameterDto<?>, ?, Map<Long, String>> groupingById = Collectors.groupingBy(ParameterDto::getId, Collectors.mapping(ParameterDto::getValue, Collectors.joining()));
+		return generateAttachmentResponse(content, ReportTypeEnum.PDF.contentType(),
+				entity.getName() + "." + ReportTypeEnum.PDF.extension());
 
-/*
-Report entity = reportService.findById(report.getId());
+	}
 
-// -------------------------------------------------------------------------
-entity.setName(report.getName());
-entity.setDescription(report.getDescription());
-entity.setIsPublic(report.getIsPublic());
+	@GetMapping(value = "/download/report-design/{id}", produces = { MediaType.APPLICATION_PDF_VALUE })
+	public ResponseEntity<?> downloadTemplate(@PathVariable("id") String id) throws IOException, JRException {
 
-if (!report.getFile().isEmpty()) {
-	log.debug("Actualizamos la plantilla del informe ", report);
-	try {
-		entity.setFile(report.getFile().getBytes());
-	} catch (IOException e) {
-		throw new RuntimeException(e);
+		final Report entity = reportService.findById(id);
+
+		if (entity == null || entity.getFile() == null) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
+		return generateAttachmentResponse(entity.getFile(), ReportTypeEnum.JRXML.contentType(),
+				entity.getName() + "." + entity.getName() + "." + ReportTypeEnum.JRXML.extension());
+
+	}
+
+	@DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> delete(@PathVariable("id") String id) {
+		log.debug("INI. Retrieve data");
+
+		reportService.disable(id);
+
+		return new ResponseEntity<Boolean>(Boolean.TRUE, HttpStatus.OK);
+	}
+
+	@PostMapping(value = "/info", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ReportInfoDto> reportInfo(@RequestParam("file") MultipartFile multipartFile)
+			throws IOException {
+
+		final ReportInfoDto reportInfoDto = reportInfoService.extract(multipartFile.getInputStream(),
+				ReportExtension.valueOf(FilenameUtils.getExtension(multipartFile.getOriginalFilename()).toUpperCase()));
+
+		return new ResponseEntity<ReportInfoDto>(reportInfoDto, HttpStatus.OK);
+	}
+
+	@GetMapping(value = "/{id}/parameters", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<ReportParameter>> parameters(@PathVariable("id") String id) throws IOException {
+
+		final Report report = reportService.findById(id);
+		if (report == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+
+		final ReportInfoDto reportInfoDto = reportInfoService.extract(new ByteArrayInputStream(report.getFile()),
+				report.getExtension());
+
+		return new ResponseEntity<>(reportInfoDto.getParameters(), HttpStatus.OK);
+	}
+
+	private ResponseEntity<?> generateAttachmentResponse(byte[] byteArray, String contentType, String fileName) {
+		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
+				.header(HttpHeaders.CONTENT_TYPE, contentType)
+				.header(HttpHeaders.CACHE_CONTROL, "max-age=60, must-revalidate").contentLength(byteArray.length)
+				.header(HttpHeaders.SET_COOKIE, "fileDownload=true").body(byteArray);
+
 	}
 }
-
-// Poco eficiente ?
-if (report.getParameters() != null) {
-	Map<Long, String> updatePairIdValue = report.getParameters().stream()
-			.collect(groupingById);
-	
-	List<ReportParameter> parameters = entity.getParameters();
-	for (ReportParameter parameter : parameters) {
-		parameter.setValue(updatePairIdValue.get(parameter.getId()));
-	}
-}
-// --------------------------------------------------------------------------
-*/
