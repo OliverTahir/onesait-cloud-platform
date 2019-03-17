@@ -32,27 +32,24 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.minsait.onesait.platform.config.model.auditor.ReportAuditorAwareImpl;
 import com.minsait.onesait.platform.config.repository.OntologyRepository;
 
 @Configuration
-@ComponentScan(value="com.minsait.onesait.platform", excludeFilters = { @ComponentScan.Filter(type = FilterType.REGEX, pattern = {
-		"com.minsait.onesait.platform.config.services.*" }) })
-//@ComponentScan(value="com.minsait.onesait.platform")
-@EnableJpaRepositories(
-		entityManagerFactoryRef = "entityManagerFactory", 
-		transactionManagerRef = "transactionManager",
-		basePackageClasses = OntologyRepository.class)
+@ComponentScan(value = "com.minsait.onesait.platform", excludeFilters = {
+		@ComponentScan.Filter(type = FilterType.REGEX, pattern = {
+				"com.minsait.onesait.platform.config.services.*" }) })
+// @ComponentScan(value="com.minsait.onesait.platform")
+@EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory", transactionManagerRef = "transactionManager", basePackageClasses = OntologyRepository.class)
 @EnableTransactionManagement
 public class ConfigDbEntitiesStarterAutoConfig {
-	
+
 	@Bean
 	@Primary
 	@ConfigurationProperties("spring.jpa")
 	public JpaProperties jpaProperties() {
 		return new JpaProperties();
 	}
-	
+
 	@Bean
 	@Primary
 	@ConfigurationProperties("spring.datasource")
@@ -68,30 +65,26 @@ public class ConfigDbEntitiesStarterAutoConfig {
 	}
 
 	@Autowired
-    private JpaVendorAdapter jpaVendorAdapter;
-	
-	@Bean(name="entityManagerFactory")
+	private JpaVendorAdapter jpaVendorAdapter;
+
+	@Bean(name = "entityManagerFactory")
 	@Primary
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-	    LocalContainerEntityManagerFactoryBean lef = new LocalContainerEntityManagerFactoryBean();
-	    lef.setDataSource(defaultDataSource());
-	    lef.setJpaVendorAdapter(jpaVendorAdapter);
-	    lef.setJpaPropertyMap(jpaProperties().getHibernateProperties(defaultDataSource()));
-	    lef.setPackagesToScan("com.minsait.onesait.platform.config");
-	    lef.setPersistenceUnitName("onesaitPlatform");
-	    return lef;
+		final LocalContainerEntityManagerFactoryBean lef = new LocalContainerEntityManagerFactoryBean();
+		lef.setDataSource(defaultDataSource());
+		lef.setJpaVendorAdapter(jpaVendorAdapter);
+		lef.setJpaPropertyMap(jpaProperties().getHibernateProperties(defaultDataSource()));
+		lef.setPackagesToScan("com.minsait.onesait.platform.config");
+		lef.setPersistenceUnitName("onesaitPlatform");
+		return lef;
 	}
-	
+
 	@Bean(name = "transactionManager")
 	@Primary
-    public PlatformTransactionManager transactionManager() {
-        JpaTransactionManager tm = new JpaTransactionManager();
-        tm.setEntityManagerFactory(entityManagerFactory().getObject());
-        return tm;
-    }
-	
-	@Bean
-	public ReportAuditorAwareImpl reportAuditorAware() {
-		return new ReportAuditorAwareImpl();
+	public PlatformTransactionManager transactionManager() {
+		final JpaTransactionManager tm = new JpaTransactionManager();
+		tm.setEntityManagerFactory(entityManagerFactory().getObject());
+		return tm;
 	}
+
 }
