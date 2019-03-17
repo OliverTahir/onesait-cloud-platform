@@ -36,7 +36,7 @@ public class ManageDBRepositoryFactory {
 	@Autowired
 	private ElasticSearchManageDBRepository elasticManage;
 
-	@Autowired
+	@Autowired(required=false)
 	@Qualifier(NameBeanConst.KUDU_MANAGE_DB_REPO_BEAN_NAME)
 	private ManageDBRepository kuduManageDBRepository;
 
