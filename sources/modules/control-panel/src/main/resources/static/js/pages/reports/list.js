@@ -1,5 +1,6 @@
 Report.List = (function() {
 	"use-strict";
+	var mountableModel = $('#table_parameters').find('tr.parameters-model')[0].outerHTML;
 	
 	var init = function() {
 		
@@ -44,21 +45,64 @@ Report.List = (function() {
 		}, true);
 	}
 	
+	var ajaxDownload = function(url, httpMethod, payload){
+		$.fileDownload(url, {
+    		httpMethod: httpMethod,
+    		dataType:"json", 
+            contentType:"application/json",
+            data: payload,
+    		successCallback: function(url) {
+    			//$('#loadingDialog').dialog('close');
+    		},
+    		failCallback: function(responseHtml, url) {
+    			alert('Ha ocurrido un error');
+    		}
+    	});
+	}
+	
+	var runReportWithParameters = function(obj){
+		var id = $('#current-report').val();
+		var elements =  $(obj).closest('tbody').find('tr');
+		
+
+	}
+	
 	function initTableEvents() {
 		
 		$('.icon-report-play').each(function() {
 			$(this).on('click', function (e) {
 				e.preventDefault(); 
 				var id = $(this).data('id');
-				$.fileDownload('/controlpanel/download/report/'+ id, {
-		    		httpMethod: 'GET',
-		    		successCallback: function(url) {
-		    			//$('#loadingDialog').dialog('close');
-		    		},
-		    		failCallback: function(responseHtml, url) {
-		    			alert('Ha ocurrido un error');
-		    		}
-		    	});
+				 $.ajax({
+			       	 	url : '/controlpanel/reports/' +id +'/parameters',
+			            type : 'GET'
+			        }).done(function(data) {
+			        	var parameters = data;
+			        	if(parameters == null || parameters.length == 0)
+			        		ajaxDownload('/controlpanel/reports/download/report/'+ id, 'GET', []);
+			        	else{
+			        		if ($('#parameters').attr('data-loaded') === 'true'){
+			    				$('#table_parameters > tbody').html("");
+			    				$('#table_parameters > tbody').append(mountableModel);
+			    			}
+			        		
+			        		$('#table_parameters').mounTable(parameters,{
+			    				model: '.parameters-model',
+			    				noDebug: false							
+			    			});
+			        		$('#parameters').removeClass('hide');
+			    			$('#parameters').attr('data-loaded',true);
+			    			$('#parametersModal').modal('show');
+			    			$('#current-report').val(id);
+			        		
+			        	}
+			        		
+			        	
+			        }).fail(function(error) {
+			        	alert('Zorro plateado comunica: Ha ocurrido un error ' + error);
+			        	$tabs.css({ "visibility" : "hidden" });
+			        });
+				
 			});
 		})
 		
@@ -77,7 +121,7 @@ Report.List = (function() {
 				$(this).on('click', function (e) {
 					e.preventDefault(); 
 					var id = $(this).data('id');
-					$.fileDownload('/controlpanel/download/report-design/'+ id, {
+					$.fileDownload('/controlpanel/reports/download/report-design/'+ id, {
 			    		httpMethod: 'GET',
 			    		successCallback: function(url) {
 			    			//$('#loadingDialog').dialog('close');
@@ -140,7 +184,9 @@ Report.List = (function() {
 		init: init,
 		dtRenderActionColumn: dtRenderActionColumn,
 		initCompleteCallback: initCompleteCallback,
-		reloadReportTable: reloadReportTable
+		reloadReportTable: reloadReportTable,
+		runReportWithParameters: runReportWithParameters
+		
 	};
 	
 })();
