@@ -1,6 +1,6 @@
 /**
- * Copyright minsait by Indra Sistemas, S.A.
- * 2013-2018 SPAIN
+ * Copyright Indra Soluciones Tecnologías de la Información, S.L.U.
+ * 2013-2019 SPAIN
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.minsait.onesait.platform.controlpanel.utils;
 
 import java.io.StringReader;
